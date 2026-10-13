@@ -1,0 +1,58 @@
+.app-root {
+    -fx-background-color: #f6f7fb;
+    -fx-font-family: "Inter", "SF Pro Text", "Segoe UI", Arial, sans-serif;
+}
+
+.app-header {
+    -fx-background-color: #182033;
+    -fx-border-color: #2f6f73;
+    -fx-border-width: 0 0 3 0;
+}
+
+.app-title {
+    -fx-text-fill: #ffffff;
+    -fx-font-size: 24px;
+    -fx-font-weight: 700;
+}
+
+.app-subtitle {
+    -fx-text-fill: #b8c4d8;
+    -fx-font-size: 13px;
+}
+
+.tab-pane {
+    -fx-background-color: transparent;
+}
+
+.tool-bar {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #dde3eb;
+    -fx-border-width: 0 0 1 0;
+    -fx-padding: 10 14;
+}
+
+.button {
+    -fx-background-color: #1f6feb;
+    -fx-text-fill: #ffffff;
+    -fx-background-radius: 6;
+    -fx-padding: 7 14;
+}
+
+.button:hover {
+    -fx-background-color: #185abc;
+}
+
+.text-area,
+.text-field,
+.list-view,
+.table-view {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #d8dee8;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+}
+
+.status-label {
+    -fx-text-fill: #4f5f73;
+    -fx-padding: 0 0 0 10;
+}
