@@ -1,74 +1,65 @@
 # DevTools
 
-DevTools to nasz projekt grupowy na przedmiot
-[Wzorce projektowe i techniki pisania czystego kodu](https://moodle3.cs.pollub.pl/course/view.php?id=1917).
-Tworzymy aplikację w Javie z interfejsem JavaFX. Chcemy zebrać w jednym miejscu
-kilka narzędzi, które przydadzą nam się podczas pracy nad projektami.
+Aplikacja Java 17 + JavaFX na zajęcia
+[Wzorce projektowe i techniki pisania czystego kodu](https://moodle3.cs.pollub.pl/course/view.php?id=1712).
 
-## Nasz plan
+## Funkcje
 
-- Sprawdzanie poprawności JSON-a, formatowanie go i usuwanie zbędnych odstępów.
-- Generowanie i otwieranie wielu URL-i na podstawie szablonu i listy wartości.
-- Tworzenie profili, które łączą kilka akcji do wspólnego uruchomienia.
-- Przeglądanie procesów i wysyłanie żądania zatrzymania wybranego procesu.
-- Wyświetlanie wyników i czasu wykonania akcji oraz eksport raportów do pliku lub schowka.
+- **Processes** — lista uruchomionych procesów, sortowanie, filtr nazwy/PID/użytkownika,
+  odświeżanie, ścieżka programu, czas uruchomienia i łączny czas CPU.
+  Zatrzymanie wymaga potwierdzenia; proxy blokuje własny PID oraz PID 1.
+  Brak uprawnień systemowych do szczegółów procesu jest oznaczany w tabeli.
+- **JSON** — walidacja i formatowanie przez Jacksona, opis błędu z wierszem/kolumną,
+  pomiar czasu. Walidacja odrzuca pusty tekst i dodatkowe dane po dokumencie.
+- **URLs** — podgląd i otwieranie adresów z szablonu z jednym nazwanym parametrem,
+  np. `localhost/orders/{orderID}`. Każdy znak poza cyframi `0–9` jest separatorem.
+  Lista `1, 2;003 | 4` tworzy cztery adresy. Kolejność, powtórzenia i zera wiodące
+  są zachowywane; brak protokołu oznacza `http://`.
+  Można usunąć URL lub całą grupę z podglądu, a następnie przywrócić pierwotny zestaw.
+- Wyniki każdej zakładki można wyeksportować jako TXT lub JSON do pliku albo schowka.
+  Eksport JSON jest tablicą tekstowych wyników (nie modelem danych procesów).
 
-Planujemy zacząć od JSON-a, potem dodać URL-e i profile, a następnie obsługę
-procesów i eksport raportów. Logikę narzędzi będziemy oddzielać od widoków,
-żeby łatwiej było dzielić pracę w grupie i testować poszczególne części.
+Nowa linia na liście parametrów tworzy osobną grupę URL-i. Inne znaki spoza `0–9`
+rozdzielają identyfikatory w tej samej grupie. `1-3` oznacza dwa identyfikatory: `1` i `3`,
+a nie zakres; identyfikatory są nieujemnymi ciągami cyfr.
 
-## Wzorce na lab 1
+## Uruchomienie i testy
 
-Wybraliśmy dziewięć wzorców konstrukcyjnych i strukturalnych:
-
-| Wzorzec | Do czego go wykorzystamy |
-| --- | --- |
-| Simple Factory | Tworzenie odpowiedniej akcji JSON: walidacja, formatowanie lub minifikacja. |
-| Builder | Budowanie profilu z ustawień i wybranych akcji. |
-| Prototype | Kopiowanie profilu razem z jego akcjami. |
-| Adapter | Połączenie naszych interfejsów z API Javy do obsługi przeglądarki i procesów. |
-| Composite | Łączenie pojedynczych akcji i grup akcji w profil. |
-| Decorator | Dodanie pomiaru czasu do akcji i grup. |
-| Facade | Prosta obsługa zapisywania i uruchamiania profili. |
-| Proxy | Kontrola żądania zatrzymania procesu, np. blokowanie zatrzymania DevTools. |
-| Bridge | Niezależny wybór formatu raportu i miejsca jego zapisu. |
-
-Szczegółowy plan, propozycje klas i sposób sprawdzenia działania opisaliśmy
-w [docs/lab 1.md](<docs/lab 1.md>).
-
-## Obecny stan
-
-Mamy konfigurację Maven oraz okno JavaFX z zakładkami Processes, JSON, URLs
-i Profiles. UI jest podzielone na osobne pliki. Przyciski nie mają jeszcze
-podłączonej logiki narzędzi, a dziewięć wybranych wzorców jest na etapie planu.
-
-Obecna fabryka widoku porządkuje tworzenie UI. Nie traktujemy jej jeszcze
-jako gotowego przykładu Simple Factory lub Factory Method na zaliczenie.
-
-## Uruchomienie
-
-Potrzebujemy JDK 17 i Maven 3.9+. Z katalogu projektu uruchamiamy:
-
-```bash
-mvn javafx:run
-```
-
-W IntelliJ IDEA importujemy projekt jako Maven i uruchamiamy klasę
-`pl.edu.devtools.Launcher`. JavaFX uruchamiamy przez `Launcher`, a nie
-bezpośrednio przez `DevToolsApplication`.
-
-## Układ projektu
-
-- `DevToolsApplication` - uruchomienie JavaFX i głównego okna.
-- `ui` - nagłówek, fabryka widoku i układ aplikacji.
-- `ui/tabs` - osobne klasy dla zakładek.
-- `ui/model` - dane używane przez widoki.
-- `docs` - nasze plany i opisy kolejnych laboratoriów.
-
-## Testy
-
-Gdy dodamy testy, będziemy uruchamiać je poleceniem:
+W katalogu `DevTools`, z JDK 17 i Maven 3.9+:
 
 ```bash
 mvn test
+mvn javafx:run
 ```
+
+W IntelliJ IDEA zaimportuj `pom.xml` jako projekt Maven i uruchom
+`pl.edu.devtools.Launcher`. Test integracyjny listy procesów potrzebuje zwykłego
+odczytu procesów systemu; piaskownica blokująca `sysctl` na macOS go nie przepuści.
+Testy otwierania URL-i i zatrzymywania procesów korzystają z atrap.
+
+## Kod i wzorce
+
+16 plików produkcyjnych zawiera 26 nazwanych typów: 19 klas, 2 rekordy i 5 interfejsów,
+wliczając typy zagnieżdżone. UI obejmuje uruchomienie aplikacji, trzy zakładki i wspólny pasek eksportu;
+małe role wzorców współdzielą pliki `JsonTool`, `Processes`, `UrlNode` i `Report`.
+
+- `core` — operacje narzędzi, model procesu, interfejs przeglądarki i raportów.
+- `infrastructure` — osobne implementacje przeglądarki, zapisu pliku i schowka.
+- `ui/tabs` — trzy zakładki; zależności są składane w `DevToolsApplication`.
+- `src/test` — 20 testów logiki i integracji z odczytem procesów.
+
+Zaimplementowane wzorce mają stałe numery 1–9, używane także w komentarzach kodu:
+
+1. **Simple Factory**
+2. **Builder**
+3. **Prototype**
+4. **Adapter**
+5. **Composite**
+6. **Decorator**
+7. **Facade**
+8. **Proxy**
+9. **Bridge**
+
+Numer wzorca jest niezależny od numeru jego zastosowania. Opis, kolejność realizacji,
+scenariusz prezentacji oraz tabela plików, metod i linii znajdują się
+w [docs/lab 1.md](<docs/lab 1.md>).
