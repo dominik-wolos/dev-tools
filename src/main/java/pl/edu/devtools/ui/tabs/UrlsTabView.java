@@ -1,50 +1,129 @@
 package pl.edu.devtools.ui.tabs;
 
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
-import javafx.scene.control.SplitPane;
-import javafx.scene.control.Tab;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
-import javafx.scene.control.ToolBar;
-import javafx.scene.layout.HBox;
+import javafx.application.Platform;
+import javafx.scene.control.*;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
+import pl.edu.devtools.core.DevToolsFacade;
+import pl.edu.devtools.core.UrlNode;
 
-public final class UrlsTabView implements WorkspaceTabView {
-    @Override
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
+
+public final class UrlsTabView {
+    private final DevToolsFacade tools;
+    private final TextField template = new TextField("localhost/orders/{orderID}");
+    private final TextArea parameters = new TextArea();
+    private final TreeView<UrlNode> preview = new TreeView<>();
+    private final Label status = new Label("Identyfikatory liczbowe; każdy znak inny niż cyfra jest separatorem.");
+    private final Button open = new Button("Otwórz URL-e");
+    private UrlNode.Group batch;
+    private UrlNode.Group prototype;
+
+    public UrlsTabView(DevToolsFacade tools) {
+        this.tools = tools;
+    }
+
     public Tab create() {
-        VBox content = new VBox(createToolbar(), createUrlPreviewPane());
-        VBox.setVgrow(content.getChildren().get(1), Priority.ALWAYS);
-
-        Tab tab = new Tab("URLs");
-        tab.setContent(content);
-        return tab;
+        template.setPromptText("http://localhost:8080/orders/{orderID}");
+        template.setPrefColumnCount(34);
+        parameters.setPromptText("Np. 1, 2; 003 | 4\n5 6\nSeparatorem może być dowolny znak poza cyfrą.");
+        template.textProperty().addListener((observable, before, after) -> invalidate());
+        parameters.textProperty().addListener((observable, before, after) -> invalidate());
+        Button generate = new Button("Podgląd");
+        generate.setOnAction(event -> generate());
+        open.setOnAction(event -> open());
+        Button remove = new Button("Usuń z podglądu");
+        remove.setOnAction(event -> removeSelected());
+        Button restore = new Button("Przywróć podgląd");
+        restore.setOnAction(event -> {
+            if (prototype != null) {
+                // Tydzień 1, Wzorzec 3/9: Prototype, zastosowanie 2.
+                // Odtworzenie niezależnego drzewa z prototypu zapisanego po generowaniu.
+                batch = prototype.copy();
+                // Koniec, Tydzień 1, Wzorzec 3/9: Prototype, zastosowanie 2.
+                showPreview();
+            }
+        });
+        SplitPane editors = new SplitPane(parameters, preview);
+        editors.setDividerPositions(0.35);
+        VBox.setVgrow(editors, Priority.ALWAYS);
+        return new Tab("URLs", new VBox(new ToolBar(new Label("Szablon:"), template, generate, open),
+                new ToolBar(remove, restore, status), editors));
     }
 
-    private ToolBar createToolbar() {
-        TextField templateField = new TextField();
-        templateField.setPromptText("https://example.com/items/{value}");
-        HBox.setHgrow(templateField, Priority.ALWAYS);
-
-        return new ToolBar(
-                new Label("Template"),
-                templateField,
-                new Button("Preview"),
-                new Button("Open")
-        );
+    private void invalidate() {
+        batch = null;
+        prototype = null;
+        preview.setRoot(null);
+        status.setText("Dane zmienione — wygeneruj podgląd.");
     }
 
-    private SplitPane createUrlPreviewPane() {
-        TextArea valuesArea = new TextArea();
-        valuesArea.setPromptText("one value per line");
+    private boolean generate() {
+        try {
+            // Tydzień 1, Wzorzec 7/9: Facade, zastosowanie 3.
+            // Przycisk Podgląd zleca fasadzie przygotowanie drzewa URL-i;
+            // widok nie musi znać buildera, fabryki ani reguł walidacji adresów.
+            batch = tools.urls(template.getText(), parameters.getText());
+            // Koniec, Tydzień 1, Wzorzec 7/9: Facade, zastosowanie 3.
+            // Tydzień 1, Wzorzec 3/9: Prototype, zastosowanie 3.
+            // Zapamiętuje głęboką kopię wygenerowanego podglądu. Usuwanie adresów
+            // z batch nie zmieni tej kopii używanej przez Przywróć podgląd.
+            prototype = batch.copy();
+            // Koniec, Tydzień 1, Wzorzec 3/9: Prototype, zastosowanie 3.
+            showPreview();
+            return true;
+        } catch (IllegalArgumentException error) {
+            batch = null;
+            prototype = null;
+            preview.setRoot(null);
+            status.setText(error.getMessage());
+            return false;
+        }
+    }
 
-        ListView<String> previewList = new ListView<>();
-        previewList.setPlaceholder(new Label("No URL preview"));
+    private void showPreview() {
+        preview.setRoot(tree(batch));
+        status.setText("Adresów: " + batch.urls().size() + ". Każdy wiersz listy tworzy grupę.");
+    }
 
-        SplitPane splitPane = new SplitPane(valuesArea, previewList);
-        splitPane.setDividerPositions(0.45);
-        return splitPane;
+    private TreeItem<UrlNode> tree(UrlNode node) {
+        TreeItem<UrlNode> item = new TreeItem<>(node);
+        if (node instanceof UrlNode.Group group) {
+            group.children().forEach(child -> item.getChildren().add(tree(child)));
+        }
+        item.setExpanded(true);
+        return item;
+    }
+
+    private void removeSelected() {
+        TreeItem<UrlNode> selected = preview.getSelectionModel().getSelectedItem();
+        if (selected != null && selected.getParent() != null
+                && selected.getParent().getValue() instanceof UrlNode.Group parent) {
+            parent.remove(selected.getValue());
+            showPreview();
+        }
+    }
+
+    private void open() {
+        if (batch == null && !generate()) {
+            return;
+        }
+        if (batch.urls().isEmpty()) {
+            status.setText("Podgląd jest pusty. Przywróć adresy lub zmień parametry.");
+            return;
+        }
+        UrlNode snapshot = batch.copy();
+        open.setDisable(true);
+        status.setText("Otwieranie " + snapshot.urls().size() + " adresów…");
+        CompletableFuture.supplyAsync(() -> tools.open(snapshot)).whenComplete((count, error) -> Platform.runLater(() -> {
+            open.setDisable(false);
+            status.setText(error == null ? "Przekazano do przeglądarki: " + count + " adresów."
+                    : error.getCause().getMessage());
+        }));
+    }
+
+    public List<String> reportLines() {
+        return batch == null ? List.of() : batch.urls().stream().map(Object::toString).toList();
     }
 }
