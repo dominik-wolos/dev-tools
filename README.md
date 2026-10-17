@@ -32,22 +32,6 @@ mvn test
 mvn javafx:run
 ```
 
-W IntelliJ IDEA zaimportuj `pom.xml` jako projekt Maven i uruchom
-`pl.edu.devtools.Launcher`. Test integracyjny listy procesów potrzebuje zwykłego
-odczytu procesów systemu; piaskownica blokująca `sysctl` na macOS go nie przepuści.
-Testy otwierania URL-i i zatrzymywania procesów korzystają z atrap.
-
-## Kod i wzorce
-
-16 plików produkcyjnych zawiera 26 nazwanych typów: 19 klas, 2 rekordy i 5 interfejsów,
-wliczając typy zagnieżdżone. UI obejmuje uruchomienie aplikacji, trzy zakładki i wspólny pasek eksportu;
-małe role wzorców współdzielą pliki `JsonTool`, `Processes`, `UrlNode` i `Report`.
-
-- `core` — operacje narzędzi, model procesu, interfejs przeglądarki i raportów.
-- `infrastructure` — osobne implementacje przeglądarki, zapisu pliku i schowka.
-- `ui/tabs` — trzy zakładki; zależności są składane w `DevToolsApplication`.
-- `src/test` — 20 testów logiki i integracji z odczytem procesów.
-
 Zaimplementowane wzorce mają stałe numery 1–9, używane także w komentarzach kodu:
 
 1. **Simple Factory**
@@ -60,6 +44,3 @@ Zaimplementowane wzorce mają stałe numery 1–9, używane także w komentarzac
 8. **Proxy**
 9. **Bridge**
 
-Numer wzorca jest niezależny od numeru jego zastosowania. Opis, kolejność realizacji,
-scenariusz prezentacji oraz tabela plików, metod i linii znajdują się
-w [docs/lab 1.md](<docs/lab 1.md>).
