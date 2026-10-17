@@ -1,7 +1,10 @@
 package pl.edu.devtools.core;
 
+import pl.edu.devtools.core.urls.UrlIterator;
+
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -9,7 +12,7 @@ import java.util.regex.Pattern;
  * Tydzień 1, Wzorzec 5/9: Composite, zastosowanie 1.
  * Pojedynczy URL i zagnieżdżona grupa mają wspólny interfejs urls().
  */
-public interface UrlNode {
+public interface UrlNode extends Iterable<URI> {
     List<URI> urls();
 
     UrlNode copy();
@@ -32,6 +35,11 @@ public interface UrlNode {
     /** Koniec, Tydzień 1, Wzorzec 1/9: Simple Factory, zastosowanie 1. */
 
     record Link(URI uri) implements UrlNode {
+        @Override
+        public Iterator<URI> iterator() {
+            return List.of(uri).iterator();
+        }
+
         @Override
         public List<URI> urls() {
             return List.of(uri);
@@ -74,6 +82,11 @@ public interface UrlNode {
 
         public List<UrlNode> children() {
             return List.copyOf(children);
+        }
+
+        @Override
+        public Iterator<URI> iterator() {
+            return new UrlIterator(children().iterator());
         }
 
         @Override

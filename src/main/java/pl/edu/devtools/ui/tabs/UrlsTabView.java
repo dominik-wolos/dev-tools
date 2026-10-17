@@ -9,6 +9,7 @@ import pl.edu.devtools.core.UrlNode;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.stream.StreamSupport;
 
 public final class UrlsTabView {
     private final DevToolsFacade tools;
@@ -124,6 +125,12 @@ public final class UrlsTabView {
     }
 
     public List<String> reportLines() {
-        return batch == null ? List.of() : batch.urls().stream().map(Object::toString).toList();
+        /**
+         * Tydzień 2, Wzorzec 3: Iterator, zastosowanie 3.
+         * Wyeksportowanie podglądu wykorzystuje wywołanie iteratora przez spliterator().
+         */
+        return batch == null ? List.of()
+                : StreamSupport.stream(batch.spliterator(), false).map(Object::toString).toList();
+        /** Koniec, Tydzień 2, Wzorzec 3: Iterator, zastosowanie 3. */
     }
 }

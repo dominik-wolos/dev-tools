@@ -6,6 +6,7 @@ import pl.edu.devtools.core.report.Report;
 import java.io.IOException;
 import java.net.URI;
 import java.util.List;
+import java.util.stream.StreamSupport;
 
 /**
  * Tydzień 1, Wzorzec 7/9: Facade, zastosowanie 1.
@@ -59,22 +60,27 @@ public final class DevToolsFacade {
      **/
     public int open(UrlNode batch) {
         /** Tydzień 1, Wzorzec 5/9: Composite, zastosowanie 2.
-        ** Przycisk Otwórz URL-e pobiera adresy przez wspólne urls(): Link zwraca
-        ** jeden adres, a Group zbiera je rekurencyjnie z dowolnie zagnieżdżonych grup.
+        ** Przycisk Otwórz URL-e przyjmuje wspólny UrlNode: Link reprezentuje jeden
+        ** adres, a Group może zawierać dowolnie zagnieżdżone grupy.
          */
-        List<URI> addresses = batch.copy().urls();
+        UrlNode addresses = batch.copy();
         /** Koniec, Tydzień 1, Wzorzec 5/9: Composite, zastosowanie 2.*/
+        /**
+         * Tydzień 2, Wzorzec 3: Iterator, zastosowanie 2.
+         * Niezależne wywołanie iteratora zlicza adresy, a kolejne przekazuje je przeglądarce.
+         */
+        long total = StreamSupport.stream(addresses.spliterator(), false).count();
         int opened = 0;
         for (URI uri : addresses) {
             try {
-
                 browser.open(uri);
                 opened++;
             } catch (IOException | RuntimeException error) {
-                throw new IllegalStateException("Otwarto " + opened + " z " + addresses.size()
+                throw new IllegalStateException("Otwarto " + opened + " z " + total
                         + " adresów. " + error.getMessage(), error);
             }
         }
+        /** Koniec, Tydzień 2, Wzorzec 3: Iterator, zastosowanie 2. */
         return opened;
     }
     /** Koniec, Tydzień 1, Wzorzec 4/9: Adapter, zastosowanie 4. */
