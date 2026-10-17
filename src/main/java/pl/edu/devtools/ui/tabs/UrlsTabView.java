@@ -11,6 +11,8 @@ import pl.edu.devtools.core.urls.commands.Command;
 import pl.edu.devtools.core.urls.commands.RemoveUrlCommand;
 import pl.edu.devtools.core.urls.commands.RestorePreviewCommand;
 import pl.edu.devtools.core.urls.commands.UndoPreviewCommand;
+import pl.edu.devtools.ui.urls.observers.UrlActionsObserver;
+import pl.edu.devtools.ui.urls.observers.UrlPreviewObserver;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -31,6 +33,12 @@ public final class UrlsTabView {
 
     public UrlsTabView(DevToolsFacade tools) {
         this.tools = tools;
+        /** Tydzień 2, Wzorzec 6: Observer, zastosowanie 6 — wywołanie rejestracji dwóch odbiorców. */
+        session.addObserver(new UrlPreviewObserver(preview, status));
+        var actions = new UrlActionsObserver(List.of(template, parameters, generate, open, preview),
+                remove, restore, undo);
+        session.addObserver(actions);
+        actions.sessionChanged(session);
     }
 
     public Tab create() {
@@ -47,21 +55,17 @@ public final class UrlsTabView {
          * Tydzień 2, Wzorzec 5: Memento, zastosowanie 5.
          * Przycisk inicjuje wywołanie cofnięcia ostatniej zmiany kopii roboczej.
          */
-        undo.setDisable(true);
         undo.setOnAction(event -> execute(new UndoPreviewCommand(session)));
         /** Koniec, Tydzień 2, Wzorzec 5: Memento, zastosowanie 5. */
         SplitPane editors = new SplitPane(parameters, preview);
         editors.setDividerPositions(0.35);
         VBox.setVgrow(editors, Priority.ALWAYS);
-        updateActions();
         return new Tab("URLs", new VBox(new ToolBar(new Label("Szablon:"), template, generate, open),
                 new ToolBar(remove, restore, undo, status), editors));
     }
 
     private void invalidate() {
         session.clear();
-        updateActions();
-        preview.setRoot(null);
         status.setText("Dane zmienione — wygeneruj podgląd.");
     }
 
@@ -74,31 +78,12 @@ public final class UrlsTabView {
              */
             session.load(tools.urls(template.getText(), parameters.getText()));
             /** Koniec, Tydzień 1, Wzorzec 7/9: Facade, zastosowanie 3. */
-            showPreview();
             return true;
         } catch (IllegalArgumentException error) {
             session.clear();
-            updateActions();
-            preview.setRoot(null);
             status.setText(error.getMessage());
             return false;
         }
-    }
-
-    private void showPreview() {
-        UrlNode.Group batch = session.batch();
-        preview.setRoot(tree(batch));
-        updateActions();
-        status.setText("Adresów: " + batch.urls().size() + ". Każdy wiersz listy tworzy grupę.");
-    }
-
-    private TreeItem<UrlNode> tree(UrlNode node) {
-        TreeItem<UrlNode> item = new TreeItem<>(node);
-        if (node instanceof UrlNode.Group group) {
-            group.children().forEach(child -> item.getChildren().add(tree(child)));
-        }
-        item.setExpanded(true);
-        return item;
     }
 
     private void removeSelected() {
@@ -111,13 +96,10 @@ public final class UrlsTabView {
 
     /**
      * Tydzień 2, Wzorzec 1: Command, zastosowanie 5.
-     * Widok inicjuje wywołanie polecenia przez wspólny interfejs i odświeża podgląd.
+     * Widok inicjuje wywołanie polecenia przez wspólny interfejs; obserwatorzy odświeżają podgląd.
      */
     private void execute(Command command) {
         command.execute();
-        if (session.batch() != null) {
-            showPreview();
-        }
     }
     /** Koniec, Tydzień 2, Wzorzec 1: Command, zastosowanie 5. */
 
@@ -133,27 +115,12 @@ public final class UrlsTabView {
             status.setText(error.getMessage());
             return;
         }
-        updateActions();
         status.setText("Otwieranie " + snapshot.urls().size() + " adresów…");
         CompletableFuture.supplyAsync(() -> tools.open(snapshot)).whenComplete((count, error) -> Platform.runLater(() -> {
             session.finishOpening();
-            updateActions();
             status.setText(error == null ? "Przekazano do przeglądarki: " + count + " adresów."
                     : error.getCause().getMessage());
         }));
-    }
-
-    /** Tydzień 2, Wzorzec 7: State, zastosowanie 4 — wywołanie oceny dostępności akcji. */
-    private void updateActions() {
-        boolean editable = session.canEdit();
-        template.setDisable(!editable);
-        parameters.setDisable(!editable);
-        generate.setDisable(!editable);
-        open.setDisable(!editable);
-        preview.setDisable(!editable);
-        remove.setDisable(!editable || session.batch() == null);
-        restore.setDisable(!editable || session.batch() == null);
-        undo.setDisable(!session.canUndo());
     }
 
     public List<String> reportLines() {

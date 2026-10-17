@@ -92,6 +92,17 @@ zarówno po sukcesie, jak i błędzie. Historia cofania pozostaje zachowana.
 Gotowość oznacza wygenerowany podgląd; jeśli usunięto wszystkie adresy,
 otwieranie jest odrzucane, ale przywracanie i cofanie nadal działają.
 
+Siódmy etap: **6. Observer** — `UrlSessionObserver` definiuje odbiorcę zmian.
+Obserwowana sesja udostępnia kontrakt `UrlSessionObservable`. Klasa abstrakcyjna
+`UrlSessionObservableSupport` zastępuje trait w Javie: przechowuje odbiorców,
+obsługuje rejestrację, odpinanie i powiadamianie. `UrlSession` dziedziczy tę obsługę
+i powiadamia po zmianie danych lub stanu. Obserwatorzy zależą od interfejsu sesji.
+`UrlPreviewObserver` odświeża drzewo i licznik,
+a `UrlActionsObserver` steruje dostępnością kontrolek. Każdy typ ma osobny plik;
+model nie zależy od JavaFX. Powiadomienia są synchroniczne; widok zmienia sesję
+na wątku JavaFX, także po zakończeniu otwierania. Odrzucone operacje nie powiadamiają
+odbiorców, a ponowna rejestracja tego samego obiektu nie dubluje powiadomień.
+
 Nowy układ osobnych plików dotyczy dodawanych wzorców; pozostałe klasy
 porządkujemy stopniowo przy kolejnych zmianach.
 

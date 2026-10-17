@@ -1,6 +1,7 @@
 package pl.edu.devtools.core.urls;
 
 import pl.edu.devtools.core.UrlNode;
+import pl.edu.devtools.core.urls.observers.UrlSessionObservableSupport;
 import pl.edu.devtools.core.urls.states.EmptyState;
 import pl.edu.devtools.core.urls.states.ReadyState;
 import pl.edu.devtools.core.urls.states.UrlState;
@@ -11,12 +12,13 @@ import java.util.Objects;
  * Tydzień 2, Wzorzec 1: Command, zastosowanie 2.
  * Odbiorca poleceń przechowuje podgląd i wykonuje operacje na jego danych.
  */
-public final class UrlSession {
+public final class UrlSession extends UrlSessionObservableSupport {
     private UrlNode.Group batch;
     private UrlNode.Group prototype;
     private final UrlHistory history = new UrlHistory();
     private UrlState state = new EmptyState();
 
+    @Override
     public UrlNode.Group batch() {
         return batch;
     }
@@ -35,6 +37,7 @@ public final class UrlSession {
         /** Koniec, Tydzień 1, Wzorzec 3/9: Prototype, zastosowanie 3. */
         history.clear();
         state = new ReadyState();
+        notifyObservers();
     }
 
     public void clear() {
@@ -43,6 +46,7 @@ public final class UrlSession {
         prototype = null;
         history.clear();
         state = new EmptyState();
+        notifyObservers();
     }
 
     public void remove(UrlNode.Group parent, UrlNode node) {
@@ -50,6 +54,7 @@ public final class UrlSession {
         if (batch != null && containsGroup(batch, parent) && parent.children().contains(node)) {
             remember();
             parent.remove(node);
+            notifyObservers();
         }
     }
 
@@ -69,6 +74,7 @@ public final class UrlSession {
             remember();
             batch = restored;
             /** Koniec, Tydzień 1, Wzorzec 3/9: Prototype, zastosowanie 2. */
+            notifyObservers();
         }
     }
 
@@ -81,6 +87,7 @@ public final class UrlSession {
     }
     /** Koniec, Tydzień 2, Wzorzec 5: Memento, zastosowanie 2. */
 
+    @Override
     public boolean canUndo() {
         return canEdit() && history.previous() != null;
     }
@@ -95,6 +102,7 @@ public final class UrlSession {
         if (previous != null) {
             batch = previous.restore();
             history.clear();
+            notifyObservers();
         }
     }
     /** Koniec, Tydzień 2, Wzorzec 5: Memento, zastosowanie 3. */
@@ -103,6 +111,7 @@ public final class UrlSession {
      * Tydzień 2, Wzorzec 7: State, zastosowanie 2.
      * Kontekst deleguje wywołanie przejść i dostępność edycji do bieżącego stanu.
      */
+    @Override
     public boolean canEdit() {
         return state.canEdit();
     }
@@ -114,11 +123,16 @@ public final class UrlSession {
         }
         UrlNode.Group snapshot = batch.copy();
         state = next;
+        notifyObservers();
         return snapshot;
     }
 
     public void finishOpening() {
-        state = state.finishOpening();
+        UrlState next = state.finishOpening();
+        if (next != state) {
+            state = next;
+            notifyObservers();
+        }
     }
     /** Koniec, Tydzień 2, Wzorzec 7: State, zastosowanie 2. */
 }
