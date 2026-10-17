@@ -1,5 +1,6 @@
 package pl.edu.devtools.ui;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.scene.control.Button;
@@ -9,6 +10,10 @@ import javafx.scene.control.ToolBar;
 import javafx.stage.FileChooser;
 import javafx.stage.Window;
 import pl.edu.devtools.core.DevToolsFacade;
+import pl.edu.devtools.core.report.JsonReport;
+import pl.edu.devtools.core.report.Report;
+import pl.edu.devtools.core.report.ReportOutput;
+import pl.edu.devtools.core.report.TextReport;
 import pl.edu.devtools.infrastructure.ClipboardReportOutput;
 import pl.edu.devtools.infrastructure.FileReportOutput;
 
@@ -21,6 +26,7 @@ public final class ReportExportView {
     private final Window owner;
     private final ChoiceBox<String> format = new ChoiceBox<>(FXCollections.observableArrayList("TXT", "JSON"));
     private final Label status = new Label();
+    private final ObjectMapper reportMapper = new ObjectMapper();
 
     public ReportExportView(DevToolsFacade tools, Supplier<List<String>> lines, Window owner) {
         this.tools = tools;
@@ -43,7 +49,7 @@ public final class ReportExportView {
             * Przycisk Kopiuj wynik łączy format wybrany w formularzu z implementacją
             * schowka; ta sama implementacja przyjmuje raport TXT lub JSON.
              */
-            tools.export(exportable(), asJson(), new ClipboardReportOutput());
+            tools.export(exportable(), report(new ClipboardReportOutput()));
             /** Koniec, Tydzień 1, Wzorzec 9/9: Bridge, zastosowanie 5.*/
             status.setText("Skopiowano.");
         } catch (Exception error) {
@@ -65,7 +71,7 @@ public final class ReportExportView {
                 * Przycisk Zapisz wynik łączy wybrany format raportu z plikiem
                 * wskazanym w oknie zapisu; nie potrzebuje osobnych eksporterów dla TXT i JSON.
                  */
-                tools.export(data, asJson(), new FileReportOutput(file.toPath()));
+                tools.export(data, report(new FileReportOutput(file.toPath())));
                 /** Koniec, Tydzień 1, Wzorzec 9/9: Bridge, zastosowanie 6.*/
                 status.setText("Zapisano: " + file.getName());
             }
@@ -76,6 +82,16 @@ public final class ReportExportView {
 
     private boolean asJson() {
         return "JSON".equals(format.getValue());
+    }
+
+    private Report report(ReportOutput destination) {
+        /**
+         * Tydzień 1, Wzorzec 9/9: Bridge, zastosowanie 4.
+         * Łączy wybrany format TXT/JSON z przekazanym miejscem zapisu: plikiem
+         * lub schowkiem. Format i miejsce zapisu można wybierać niezależnie.
+         */
+        return asJson() ? new JsonReport(destination, reportMapper) : new TextReport(destination);
+        /** Koniec, Tydzień 1, Wzorzec 9/9: Bridge, zastosowanie 4. */
     }
 
     private List<String> exportable() {

@@ -5,6 +5,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import pl.edu.devtools.core.json.operations.ValueOperation;
+import pl.edu.devtools.core.report.JsonReport;
+import pl.edu.devtools.core.report.Report;
+import pl.edu.devtools.core.report.ReportOutput;
+import pl.edu.devtools.core.report.TextReport;
 import pl.edu.devtools.infrastructure.FileReportOutput;
 
 import java.io.IOException;
@@ -190,8 +194,12 @@ class DevToolsTest {
         for (boolean asJson : new boolean[]{false, true}) {
             AtomicReference<String> clipboard = new AtomicReference<>();
             Path file = folder.resolve(asJson ? "result.json" : "result.txt");
-            facade.export(lines, asJson, clipboard::set);
-            facade.export(lines, asJson, new FileReportOutput(file));
+
+            ReportOutput memory = clipboard::set;
+            for (ReportOutput destination : List.of(memory, new FileReportOutput(file))) {
+                Report report = asJson ? new JsonReport(destination, new ObjectMapper()) : new TextReport(destination);
+                facade.export(lines, report);
+            }
             assertEquals(clipboard.get(), Files.readString(file));
             if (asJson) {
                 assertEquals(lines, new ObjectMapper().readValue(Files.readString(file), List.class));
@@ -203,7 +211,7 @@ class DevToolsTest {
 
     @Test
     void bridgePropagatesDestinationFailure() {
-        assertThrows(IOException.class, () -> new Report.Text(text -> {
+        assertThrows(IOException.class, () -> new TextReport(text -> {
             throw new IOException("destination failed");
         }).export(List.of("test")));
     }

@@ -1,7 +1,7 @@
 package pl.edu.devtools.core;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import pl.edu.devtools.core.json.operations.Operation;
+import pl.edu.devtools.core.report.Report;
 
 import java.io.IOException;
 import java.net.URI;
@@ -15,7 +15,6 @@ public final class DevToolsFacade {
     private final Processes processes;
     private final JsonTool.Timed json;
     private final Browser browser;
-    private final ObjectMapper reportMapper = new ObjectMapper();
 
     public DevToolsFacade(Processes processes, JsonTool json, Browser browser) {
         this.processes = processes;
@@ -80,14 +79,13 @@ public final class DevToolsFacade {
     }
     /** Koniec, Tydzień 1, Wzorzec 4/9: Adapter, zastosowanie 4. */
 
-    public void export(List<String> lines, boolean asJson, Report.Output destination) throws IOException {
-        /** Tydzień 1, Wzorzec 9/9: Bridge, zastosowanie 4.
-        ** Łączy wybrany format TXT/JSON z przekazanym miejscem zapisu: plikiem
-        ** lub schowkiem. Format i miejsce zapisu można wybierać niezależnie.
+    public void export(List<String> lines, Report report) throws IOException {
+        /**
+         * Tydzień 2, Wzorzec 9: Template Method, zastosowanie 2.
+         * Wspólne wywołanie metody szablonowej dla raportu TXT lub JSON.
          */
-        Report report = asJson ? new Report.Json(destination, reportMapper) : new Report.Text(destination);
         report.export(lines);
-        /** Koniec, Tydzień 1, Wzorzec 9/9: Bridge, zastosowanie 4.*/
+        /** Koniec, Tydzień 2, Wzorzec 9: Template Method, zastosowanie 2. */
     }
 }
 /**Koniec, Tydzień 1, Wzorzec 7/9: Facade, zastosowanie 1.*/

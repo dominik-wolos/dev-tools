@@ -53,6 +53,16 @@ i wykonuje przekazaną strategię. Widok `JsonTabView` wybiera ją przyciskiem,
 a fasada i dekorator czasu przekazują ją dalej. Nową operację dodaje się jako
 klasę implementującą `Operation`.
 
-Nowy układ osobnych plików dotyczy strategii; pozostałe klasy porządkujemy
-stopniowo przy kolejnych zmianach.
+Drugi etap: **9. Template Method** — metoda `Report.export()` oznaczona `final` ustala
+przebieg: walidacja danych → `render()` → zapis. `TextReport` i `JsonReport`
+dostarczają krok renderowania. Puste dane są odrzucane przed renderowaniem
+i zapisem; wywołanie szablonu znajduje się w `DevToolsFacade.export()`.
+
+Pakiet `core.report` zawiera osobne pliki: `Report`, `ReportOutput`, `TextReport`
+i `JsonReport`. Szablon zarządza przebiegiem, podklasy odpowiadają za format,
+a implementacje `ReportOutput` za zapis. Fasada przyjmuje gotowy `Report`;
+wybór formatu i miejsca zapisu pozostaje przy formularzu eksportu.
+
+Nowy układ osobnych plików dotyczy strategii i raportów; pozostałe klasy
+porządkujemy stopniowo przy kolejnych zmianach.
 
