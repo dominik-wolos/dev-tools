@@ -53,4 +53,4 @@ public abstract class Report {
         }
     }
 }
-// Koniec, Tydzień 1, Wzorzec 9/9: Bridge, zastosowanie 1.
+/** Koniec, Tydzień 1, Wzorzec 9/9: Bridge, zastosowanie 1.*/

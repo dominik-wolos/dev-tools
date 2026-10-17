@@ -19,4 +19,4 @@ public final class DesktopBrowser implements Browser {
         Desktop.getDesktop().browse(uri);
     }
 }
-// Koniec, Tydzień 1, Wzorzec 4/9: Adapter, zastosowanie 2.
+/** Koniec, Tydzień 1, Wzorzec 4/9: Adapter, zastosowanie 2.*/

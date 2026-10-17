@@ -55,5 +55,5 @@ public interface JsonTool {
             return elapsedNanos / 1_000_000.0;
         }
     }
-    // Koniec, Tydzień 1, Wzorzec 6/9: Decorator, zastosowanie 1.
+    /** Koniec, Tydzień 1, Wzorzec 6/9: Decorator, zastosowanie 1.*/
 }

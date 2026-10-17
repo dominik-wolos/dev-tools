@@ -20,4 +20,4 @@ public final class ClipboardReportOutput implements Report.Output {
         }
     }
 }
-// Koniec, Tydzień 1, Wzorzec 9/9: Bridge, zastosowanie 3.
+/** Koniec, Tydzień 1, Wzorzec 9/9: Bridge, zastosowanie 3.*/

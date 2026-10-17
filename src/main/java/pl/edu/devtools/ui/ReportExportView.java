@@ -39,11 +39,12 @@ public final class ReportExportView {
 
     private void copy(ActionEvent event) {
         try {
-            // Tydzień 1, Wzorzec 9/9: Bridge, zastosowanie 5.
-            // Przycisk Kopiuj wynik łączy format wybrany w formularzu z implementacją
-            // schowka; ta sama implementacja przyjmuje raport TXT lub JSON.
+            /** Tydzień 1, Wzorzec 9/9: Bridge, zastosowanie 5.
+            * Przycisk Kopiuj wynik łączy format wybrany w formularzu z implementacją
+            * schowka; ta sama implementacja przyjmuje raport TXT lub JSON.
+             */
             tools.export(exportable(), asJson(), new ClipboardReportOutput());
-            // Koniec, Tydzień 1, Wzorzec 9/9: Bridge, zastosowanie 5.
+            /** Koniec, Tydzień 1, Wzorzec 9/9: Bridge, zastosowanie 5.*/
             status.setText("Skopiowano.");
         } catch (Exception error) {
             status.setText(error.getMessage());
@@ -60,11 +61,12 @@ public final class ReportExportView {
                     asJson() ? "JSON" : "Tekst", asJson() ? "*.json" : "*.txt"));
             var file = chooser.showSaveDialog(owner);
             if (file != null) {
-                // Tydzień 1, Wzorzec 9/9: Bridge, zastosowanie 6.
-                // Przycisk Zapisz wynik łączy wybrany format raportu z plikiem
-                // wskazanym w oknie zapisu; nie potrzebuje osobnych eksporterów dla TXT i JSON.
+                /** Tydzień 1, Wzorzec 9/9: Bridge, zastosowanie 6.
+                * Przycisk Zapisz wynik łączy wybrany format raportu z plikiem
+                * wskazanym w oknie zapisu; nie potrzebuje osobnych eksporterów dla TXT i JSON.
+                 */
                 tools.export(data, asJson(), new FileReportOutput(file.toPath()));
-                // Koniec, Tydzień 1, Wzorzec 9/9: Bridge, zastosowanie 6.
+                /** Koniec, Tydzień 1, Wzorzec 9/9: Bridge, zastosowanie 6.*/
                 status.setText("Zapisano: " + file.getName());
             }
         } catch (Exception error) {

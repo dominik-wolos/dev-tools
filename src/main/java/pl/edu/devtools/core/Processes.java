@@ -35,7 +35,7 @@ public interface Processes {
                     .map(ProcessHandle::destroy).orElse(false);
         }
     }
-    // Koniec, Tydzień 1, Wzorzec 4/9: Adapter, zastosowanie 1.
+    /** Koniec, Tydzień 1, Wzorzec 4/9: Adapter, zastosowanie 1.*/
 
     /**
      * Tydzień 1, Wzorzec 8/9: Proxy, zastosowanie 1.
@@ -63,5 +63,5 @@ public interface Processes {
             return delegate.stop(pid);
         }
     }
-    // Koniec, Tydzień 1, Wzorzec 8/9: Proxy, zastosowanie 1.
+    /** Koniec, Tydzień 1, Wzorzec 8/9: Proxy, zastosowanie 1.*/
 }

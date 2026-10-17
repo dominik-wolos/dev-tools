@@ -48,11 +48,12 @@ public final class JsonTabView {
     private void run(boolean format) {
         valid = false;
         try {
-            // Tydzień 1, Wzorzec 7/9: Facade, zastosowanie 2.
-            // Przyciski Waliduj i Formatuj korzystają z jednej metody fasady;
-            // widok nie konfiguruje Jacksona ani dekoratora pomiaru czasu.
-            output.setText(tools.json(input.getText(), format));
-            // Koniec, Tydzień 1, Wzorzec 7/9: Facade, zastosowanie 2.
+            /** Tydzień 1, Wzorzec 7/9: Facade, zastosowanie 2.
+            * Przyciski Waliduj i Formatuj korzystają z jednej metody fasady;
+            * widok nie konfiguruje Jacksona ani dekoratora pomiaru czasu.
+            */
+             output.setText(tools.json(input.getText(), format));
+            /** Koniec, Tydzień 1, Wzorzec 7/9: Facade, zastosowanie 2.*/
             valid = true;
             status.setText(String.format("Poprawny JSON · %.2f ms", tools.jsonMillis()));
         } catch (JsonProcessingException error) {

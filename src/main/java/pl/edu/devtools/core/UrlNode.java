@@ -29,7 +29,7 @@ public interface UrlNode {
         addresses.forEach(uri -> group.add(new Link(uri)));
         return group;
     }
-    // Koniec, Tydzień 1, Wzorzec 1/9: Simple Factory, zastosowanie 1.
+    /** Koniec, Tydzień 1, Wzorzec 1/9: Simple Factory, zastosowanie 1. */
 
     record Link(URI uri) implements UrlNode {
         @Override
@@ -92,14 +92,14 @@ public interface UrlNode {
             children.forEach(child -> result.add(child.copy()));
             return result;
         }
-        // Koniec, Tydzień 1, Wzorzec 3/9: Prototype, zastosowanie 1.
+        /** Koniec, Tydzień 1, Wzorzec 3/9: Prototype, zastosowanie 1.*/
 
         @Override
         public String toString() {
             return label + " (" + urls().size() + ")";
         }
     }
-    // Koniec, Tydzień 1, Wzorzec 5/9: Composite, zastosowanie 1.
+    /** Koniec, Tydzień 1, Wzorzec 5/9: Composite, zastosowanie 1.*/
 
     /**
      * Tydzień 1, Wzorzec 2/9: Builder, zastosowanie 1.
@@ -153,11 +153,12 @@ public interface UrlNode {
                     }
                 }
                 if (!addresses.isEmpty()) {
-                    // Tydzień 1, Wzorzec 1/9: Simple Factory, zastosowanie 2.
-                    // Podgląd URL-i: fabryka wybiera Link dla jednego adresu w wierszu
-                    // albo Group dla kilku; builder dodaje gotowy węzeł do zestawu.
+                    /** Tydzień 1, Wzorzec 1/9: Simple Factory, zastosowanie 2.
+                    Podgląd URL-i: fabryka wybiera Link dla jednego adresu w wierszu
+                     albo Group dla kilku; builder dodaje gotowy węzeł do zestawu.
+                     */
                     result.add(UrlNode.create("Wiersz " + lineNumber, addresses));
-                    // Koniec, Tydzień 1, Wzorzec 1/9: Simple Factory, zastosowanie 2.
+                    /** Koniec, Tydzień 1, Wzorzec 1/9: Simple Factory, zastosowanie 2.*/
                 }
             }
             if (result.children().isEmpty()) {
@@ -166,5 +167,5 @@ public interface UrlNode {
             return result;
         }
     }
-    // Koniec, Tydzień 1, Wzorzec 2/9: Builder, zastosowanie 1.
+    /** Koniec, Tydzień 1, Wzorzec 2/9: Builder, zastosowanie 1.*/
 }

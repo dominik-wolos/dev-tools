@@ -23,4 +23,4 @@ public final class FileReportOutput implements Report.Output {
         Files.writeString(path, text, StandardCharsets.UTF_8);
     }
 }
-// Koniec, Tydzień 1, Wzorzec 9/9: Bridge, zastosowanie 2.
+/** Koniec, Tydzień 1, Wzorzec 9/9: Bridge, zastosowanie 2.*/
