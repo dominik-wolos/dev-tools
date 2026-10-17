@@ -24,6 +24,9 @@ public final class UrlsTabView {
     private final Label status = new Label("Identyfikatory liczbowe; każdy znak inny niż cyfra jest separatorem.");
     private final Button open = new Button("Otwórz URL-e");
     private final Button undo = new Button("Cofnij");
+    private final Button generate = new Button("Podgląd");
+    private final Button remove = new Button("Usuń z podglądu");
+    private final Button restore = new Button("Przywróć podgląd");
     private final UrlSession session = new UrlSession();
 
     public UrlsTabView(DevToolsFacade tools) {
@@ -36,12 +39,9 @@ public final class UrlsTabView {
         parameters.setPromptText("Np. 1, 2; 003 | 4\n5 6\nSeparatorem może być dowolny znak poza cyfrą.");
         template.textProperty().addListener((observable, before, after) -> invalidate());
         parameters.textProperty().addListener((observable, before, after) -> invalidate());
-        Button generate = new Button("Podgląd");
         generate.setOnAction(event -> generate());
         open.setOnAction(event -> open());
-        Button remove = new Button("Usuń z podglądu");
         remove.setOnAction(event -> removeSelected());
-        Button restore = new Button("Przywróć podgląd");
         restore.setOnAction(event -> execute(new RestorePreviewCommand(session)));
         /**
          * Tydzień 2, Wzorzec 5: Memento, zastosowanie 5.
@@ -53,13 +53,14 @@ public final class UrlsTabView {
         SplitPane editors = new SplitPane(parameters, preview);
         editors.setDividerPositions(0.35);
         VBox.setVgrow(editors, Priority.ALWAYS);
+        updateActions();
         return new Tab("URLs", new VBox(new ToolBar(new Label("Szablon:"), template, generate, open),
                 new ToolBar(remove, restore, undo, status), editors));
     }
 
     private void invalidate() {
         session.clear();
-        undo.setDisable(true);
+        updateActions();
         preview.setRoot(null);
         status.setText("Dane zmienione — wygeneruj podgląd.");
     }
@@ -77,7 +78,7 @@ public final class UrlsTabView {
             return true;
         } catch (IllegalArgumentException error) {
             session.clear();
-            undo.setDisable(true);
+            updateActions();
             preview.setRoot(null);
             status.setText(error.getMessage());
             return false;
@@ -87,7 +88,7 @@ public final class UrlsTabView {
     private void showPreview() {
         UrlNode.Group batch = session.batch();
         preview.setRoot(tree(batch));
-        undo.setDisable(!session.canUndo());
+        updateActions();
         status.setText("Adresów: " + batch.urls().size() + ". Każdy wiersz listy tworzy grupę.");
     }
 
@@ -124,19 +125,35 @@ public final class UrlsTabView {
         if (session.batch() == null && !generate()) {
             return;
         }
-        UrlNode.Group batch = session.batch();
-        if (batch.urls().isEmpty()) {
-            status.setText("Podgląd jest pusty. Przywróć adresy lub zmień parametry.");
+        UrlNode snapshot;
+        try {
+            /** Tydzień 2, Wzorzec 7: State, zastosowanie 3 — wywołanie rozpoczęcia otwierania. */
+            snapshot = session.beginOpening();
+        } catch (IllegalStateException error) {
+            status.setText(error.getMessage());
             return;
         }
-        UrlNode snapshot = batch.copy();
-        open.setDisable(true);
+        updateActions();
         status.setText("Otwieranie " + snapshot.urls().size() + " adresów…");
         CompletableFuture.supplyAsync(() -> tools.open(snapshot)).whenComplete((count, error) -> Platform.runLater(() -> {
-            open.setDisable(false);
+            session.finishOpening();
+            updateActions();
             status.setText(error == null ? "Przekazano do przeglądarki: " + count + " adresów."
                     : error.getCause().getMessage());
         }));
+    }
+
+    /** Tydzień 2, Wzorzec 7: State, zastosowanie 4 — wywołanie oceny dostępności akcji. */
+    private void updateActions() {
+        boolean editable = session.canEdit();
+        template.setDisable(!editable);
+        parameters.setDisable(!editable);
+        generate.setDisable(!editable);
+        open.setDisable(!editable);
+        preview.setDisable(!editable);
+        remove.setDisable(!editable || session.batch() == null);
+        restore.setDisable(!editable || session.batch() == null);
+        undo.setDisable(!session.canUndo());
     }
 
     public List<String> reportLines() {
