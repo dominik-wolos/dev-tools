@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
+import pl.edu.devtools.core.json.operations.ValueOperation;
 import pl.edu.devtools.infrastructure.FileReportOutput;
 
 import java.io.IOException;
@@ -16,6 +17,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static pl.edu.devtools.core.json.operations.Operation.*;
 
 class DevToolsTest {
     private final JsonTool json = new JsonTool.Jackson();
@@ -23,38 +25,58 @@ class DevToolsTest {
     @Test
     void validatesObjectsArraysAndScalarValues() throws IOException {
         for (String input : List.of("{\"a\":1}", "[1,true,null]", "null", "42", "\"text\"")) {
-            assertEquals("JSON jest poprawny.", json.execute(input, false));
+            assertEquals("JSON jest poprawny.", json.execute(input, VALIDATE));
         }
     }
 
     @Test
     void rejectsEmptyInputAndInvalidSyntax() {
-        assertThrows(IllegalArgumentException.class, () -> json.execute("  ", false));
-        assertThrows(IllegalArgumentException.class, () -> json.execute(null, false));
-        assertThrows(JsonProcessingException.class, () -> json.execute("{bad}", false));
-        assertThrows(JsonProcessingException.class, () -> json.execute("{\"a\":1,}", true));
+        for (var operation : List.of(VALIDATE, FORMAT, MINIFY)) {
+            assertThrows(IllegalArgumentException.class, () -> json.execute("  ", operation));
+            assertThrows(IllegalArgumentException.class, () -> json.execute(null, operation));
+            assertThrows(JsonProcessingException.class, () -> json.execute("{bad}", operation));
+            assertThrows(JsonProcessingException.class, () -> json.execute("{\"a\":1,}", operation));
+        }
     }
 
     @Test
     void rejectsTrailingDocumentAndGarbage() {
-        assertThrows(JsonProcessingException.class, () -> json.execute("{} {}", false));
-        assertThrows(JsonProcessingException.class, () -> json.execute("[] extra", true));
+        for (var operation : List.of(VALIDATE, FORMAT, MINIFY)) {
+            assertThrows(JsonProcessingException.class, () -> json.execute("{} {}", operation));
+            assertThrows(JsonProcessingException.class, () -> json.execute("[] extra", operation));
+        }
     }
 
     @Test
     void formattingPreservesPreciseNumbersAndProducesIndentedJson() throws IOException {
-        String formatted = json.execute("{\"value\":0.12345678901234567890123456789,\"large\":12345678901234567890123456789}", true);
+        String formatted = json.execute("{\"value\":0.12345678901234567890123456789,\"large\":12345678901234567890123456789}", FORMAT);
         assertTrue(formatted.contains("\n"));
         assertTrue(formatted.contains("0.12345678901234567890123456789"));
         assertTrue(formatted.contains("12345678901234567890123456789"));
     }
 
     @Test
+    void minificationPreservesStringsAndPreciseNumbers() throws IOException {
+        String compact = "{\"text\":\" a b \",\"value\":0.12345678901234567890123456789,\"large\":12345678901234567890123456789,\"items\":[true,null]}";
+        assertEquals(compact, json.execute(json.execute(compact, FORMAT), MINIFY));
+        assertEquals("null", json.execute(" null ", MINIFY));
+    }
+
+    @Test
+    void facadeAcceptsNewStrategyWithoutChangingParserOrDecorator() throws IOException {
+        var facade = facade(new ArrayList<>());
+        var operation = new ValueOperation();
+        assertEquals("42", facade.json("{\"value\":42}", operation));
+        assertEquals("JSON jest poprawny.", facade.json("{}", VALIDATE));
+        assertThrows(JsonProcessingException.class, () -> facade.json("{} {}", operation));
+    }
+
+    @Test
     void decoratorPreservesResultAndException() throws IOException {
         var measured = new JsonTool.Timed(json);
-        assertEquals(json.execute("{}", true), measured.execute("{}", true));
+        assertEquals(json.execute("{}", FORMAT), measured.execute("{}", FORMAT));
         assertTrue(measured.elapsedMillis() >= 0);
-        assertThrows(JsonProcessingException.class, () -> measured.execute("{", true));
+        assertThrows(JsonProcessingException.class, () -> measured.execute("{", FORMAT));
         assertTrue(measured.elapsedMillis() >= 0);
     }
 

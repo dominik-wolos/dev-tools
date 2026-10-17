@@ -3,11 +3,12 @@ package pl.edu.devtools.core;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import pl.edu.devtools.core.json.operations.Operation;
 
 import java.io.IOException;
 
 public interface JsonTool {
-    String execute(String input, boolean format) throws IOException;
+    String execute(String input, Operation operation) throws IOException;
 
     final class Jackson implements JsonTool {
         private final ObjectMapper mapper = new ObjectMapper()
@@ -16,7 +17,7 @@ public interface JsonTool {
                 .enable(DeserializationFeature.USE_BIG_INTEGER_FOR_INTS);
 
         @Override
-        public String execute(String input, boolean format) throws IOException {
+        public String execute(String input, Operation operation) throws IOException {
             if (input == null || input.isBlank()) {
                 throw new IllegalArgumentException("Wpisz JSON do sprawdzenia.");
             }
@@ -24,8 +25,12 @@ public interface JsonTool {
             if (value == null || value.isMissingNode()) {
                 throw new IllegalArgumentException("Wpisz JSON do sprawdzenia.");
             }
-            return format ? mapper.writerWithDefaultPrettyPrinter().writeValueAsString(value)
-                    : "JSON jest poprawny.";
+            /**
+             * Tydzień 2, Wzorzec 8: Strategy, zastosowanie 2.
+             * Po wspólnej walidacji następuje wywołanie wybranej strategii.
+             */
+            return operation.apply(value, mapper);
+            /** Koniec, Tydzień 2, Wzorzec 8: Strategy, zastosowanie 2. */
         }
     }
 
@@ -42,10 +47,10 @@ public interface JsonTool {
         }
 
         @Override
-        public String execute(String input, boolean format) throws IOException {
+        public String execute(String input, Operation operation) throws IOException {
             long start = System.nanoTime();
             try {
-                return delegate.execute(input, format);
+                return delegate.execute(input, operation);
             } finally {
                 elapsedNanos = System.nanoTime() - start;
             }
