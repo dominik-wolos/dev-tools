@@ -69,6 +69,12 @@ otwieranie i eksport korzystają z tej samej kolejności, zachowując duplikaty.
 Każde wywołanie `iterator()` zwraca niezależny iterator tylko do odczytu.
 Podczas iteracji nie należy zmieniać drzewa; otwieranie używa jego kopii.
 
-Nowy układ osobnych plików dotyczy strategii, raportów i iteratora; pozostałe klasy
+Czwarty etap: **1. Command** — `RemoveUrlCommand` i `RestorePreviewCommand`
+w pakiecie `core.urls.commands` implementują `Command.execute()`. Polecenia
+przechowują parametry operacji, a `UrlSession` zarządza podglądem i prototypem.
+Przyciski zakładki URLs wywołują komendy przez wspólny interfejs; model i komendy
+można uruchamiać oraz testować bez JavaFX. Każdy typ ma własny plik.
+
+Nowy układ osobnych plików dotyczy dodawanych wzorców; pozostałe klasy
 porządkujemy stopniowo przy kolejnych zmianach.
 

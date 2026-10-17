@@ -6,6 +6,10 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import pl.edu.devtools.core.DevToolsFacade;
 import pl.edu.devtools.core.UrlNode;
+import pl.edu.devtools.core.urls.UrlSession;
+import pl.edu.devtools.core.urls.commands.Command;
+import pl.edu.devtools.core.urls.commands.RemoveUrlCommand;
+import pl.edu.devtools.core.urls.commands.RestorePreviewCommand;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -18,8 +22,7 @@ public final class UrlsTabView {
     private final TreeView<UrlNode> preview = new TreeView<>();
     private final Label status = new Label("Identyfikatory liczbowe; każdy znak inny niż cyfra jest separatorem.");
     private final Button open = new Button("Otwórz URL-e");
-    private UrlNode.Group batch;
-    private UrlNode.Group prototype;
+    private final UrlSession session = new UrlSession();
 
     public UrlsTabView(DevToolsFacade tools) {
         this.tools = tools;
@@ -37,15 +40,7 @@ public final class UrlsTabView {
         Button remove = new Button("Usuń z podglądu");
         remove.setOnAction(event -> removeSelected());
         Button restore = new Button("Przywróć podgląd");
-        restore.setOnAction(event -> {
-            if (prototype != null) {
-                // Tydzień 1, Wzorzec 3/9: Prototype, zastosowanie 2.
-                // Odtworzenie niezależnego drzewa z prototypu zapisanego po generowaniu.
-                batch = prototype.copy();
-                // Koniec, Tydzień 1, Wzorzec 3/9: Prototype, zastosowanie 2.
-                showPreview();
-            }
-        });
+        restore.setOnAction(event -> execute(new RestorePreviewCommand(session)));
         SplitPane editors = new SplitPane(parameters, preview);
         editors.setDividerPositions(0.35);
         VBox.setVgrow(editors, Priority.ALWAYS);
@@ -54,29 +49,24 @@ public final class UrlsTabView {
     }
 
     private void invalidate() {
-        batch = null;
-        prototype = null;
+        session.clear();
         preview.setRoot(null);
         status.setText("Dane zmienione — wygeneruj podgląd.");
     }
 
     private boolean generate() {
         try {
-            // Tydzień 1, Wzorzec 7/9: Facade, zastosowanie 3.
-            // Przycisk Podgląd zleca fasadzie przygotowanie drzewa URL-i;
-            // widok nie musi znać buildera, fabryki ani reguł walidacji adresów.
-            batch = tools.urls(template.getText(), parameters.getText());
-            // Koniec, Tydzień 1, Wzorzec 7/9: Facade, zastosowanie 3.
-            // Tydzień 1, Wzorzec 3/9: Prototype, zastosowanie 3.
-            // Zapamiętuje głęboką kopię wygenerowanego podglądu. Usuwanie adresów
-            // z batch nie zmieni tej kopii używanej przez Przywróć podgląd.
-            prototype = batch.copy();
-            // Koniec, Tydzień 1, Wzorzec 3/9: Prototype, zastosowanie 3.
+            /**
+             * Tydzień 1, Wzorzec 7/9: Facade, zastosowanie 3.
+             * Przycisk Podgląd zleca fasadzie przygotowanie drzewa URL-i;
+             * widok nie musi znać buildera, fabryki ani reguł walidacji adresów.
+             */
+            session.load(tools.urls(template.getText(), parameters.getText()));
+            /** Koniec, Tydzień 1, Wzorzec 7/9: Facade, zastosowanie 3. */
             showPreview();
             return true;
         } catch (IllegalArgumentException error) {
-            batch = null;
-            prototype = null;
+            session.clear();
             preview.setRoot(null);
             status.setText(error.getMessage());
             return false;
@@ -84,6 +74,7 @@ public final class UrlsTabView {
     }
 
     private void showPreview() {
+        UrlNode.Group batch = session.batch();
         preview.setRoot(tree(batch));
         status.setText("Adresów: " + batch.urls().size() + ". Każdy wiersz listy tworzy grupę.");
     }
@@ -101,15 +92,27 @@ public final class UrlsTabView {
         TreeItem<UrlNode> selected = preview.getSelectionModel().getSelectedItem();
         if (selected != null && selected.getParent() != null
                 && selected.getParent().getValue() instanceof UrlNode.Group parent) {
-            parent.remove(selected.getValue());
-            showPreview();
+            execute(new RemoveUrlCommand(session, parent, selected.getValue()));
         }
     }
 
+    /**
+     * Tydzień 2, Wzorzec 1: Command, zastosowanie 5.
+     * Widok inicjuje wywołanie polecenia przez wspólny interfejs i odświeża podgląd.
+     */
+    private void execute(Command command) {
+        command.execute();
+        if (session.batch() != null) {
+            showPreview();
+        }
+    }
+    /** Koniec, Tydzień 2, Wzorzec 1: Command, zastosowanie 5. */
+
     private void open() {
-        if (batch == null && !generate()) {
+        if (session.batch() == null && !generate()) {
             return;
         }
+        UrlNode.Group batch = session.batch();
         if (batch.urls().isEmpty()) {
             status.setText("Podgląd jest pusty. Przywróć adresy lub zmień parametry.");
             return;
@@ -125,6 +128,7 @@ public final class UrlsTabView {
     }
 
     public List<String> reportLines() {
+        UrlNode.Group batch = session.batch();
         /**
          * Tydzień 2, Wzorzec 3: Iterator, zastosowanie 3.
          * Wyeksportowanie podglądu wykorzystuje wywołanie iteratora przez spliterator().
