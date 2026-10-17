@@ -5,6 +5,7 @@ import javafx.scene.control.*;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import pl.edu.devtools.core.DevToolsFacade;
+import pl.edu.devtools.core.json.operations.Operation;
 
 import java.util.List;
 
@@ -21,7 +22,7 @@ public final class JsonTabView {
 
     public Tab create() {
         input.setPromptText("{ \"orderID\": 123, \"status\": \"NEW\" }");
-        output.setPromptText("Wynik walidacji lub sformatowany JSON");
+        output.setPromptText("Wynik walidacji, formatowania lub minifikacji JSON-a");
         output.setEditable(false);
         input.textProperty().addListener((observable, before, after) -> {
             valid = false;
@@ -30,9 +31,11 @@ public final class JsonTabView {
         });
         Button validate = new Button("Waliduj");
         Button format = new Button("Formatuj");
+        Button minify = new Button("Minifikuj");
         Button clear = new Button("Wyczyść");
-        validate.setOnAction(event -> run(false));
-        format.setOnAction(event -> run(true));
+        validate.setOnAction(event -> run(Operation.VALIDATE));
+        format.setOnAction(event -> run(Operation.FORMAT));
+        minify.setOnAction(event -> run(Operation.MINIFY));
         clear.setOnAction(event -> {
             input.clear();
             output.clear();
@@ -42,17 +45,17 @@ public final class JsonTabView {
         SplitPane editors = new SplitPane(input, output);
         editors.setDividerPositions(0.5);
         VBox.setVgrow(editors, Priority.ALWAYS);
-        return new Tab("JSON", new VBox(new ToolBar(validate, format, clear, status), editors));
+        return new Tab("JSON", new VBox(new ToolBar(validate, format, minify, clear, status), editors));
     }
 
-    private void run(boolean format) {
+    private void run(Operation operation) {
         valid = false;
         try {
             /** Tydzień 1, Wzorzec 7/9: Facade, zastosowanie 2.
-            * Przyciski Waliduj i Formatuj korzystają z jednej metody fasady;
+            * Przyciski operacji JSON-a korzystają z jednej metody fasady;
             * widok nie konfiguruje Jacksona ani dekoratora pomiaru czasu.
             */
-             output.setText(tools.json(input.getText(), format));
+            output.setText(tools.json(input.getText(), operation));
             /** Koniec, Tydzień 1, Wzorzec 7/9: Facade, zastosowanie 2.*/
             valid = true;
             status.setText(String.format("Poprawny JSON · %.2f ms", tools.jsonMillis()));

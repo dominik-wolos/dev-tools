@@ -9,7 +9,7 @@ Aplikacja Java 17 + JavaFX na zajęcia
   odświeżanie, ścieżka programu, czas uruchomienia i łączny czas CPU.
   Zatrzymanie wymaga potwierdzenia; proxy blokuje własny PID oraz PID 1.
   Brak uprawnień systemowych do szczegółów procesu jest oznaczany w tabeli.
-- **JSON** — walidacja i formatowanie przez Jacksona, opis błędu z wierszem/kolumną,
+- **JSON** — walidacja, formatowanie i minifikacja przez Jacksona, opis błędu z wierszem/kolumną,
   pomiar czasu. Walidacja odrzuca pusty tekst i dodatkowe dane po dokumencie.
 - **URLs** — podgląd i otwieranie adresów z szablonu z jednym nazwanym parametrem,
   np. `localhost/orders/{orderID}`. Każdy znak poza cyframi `0–9` jest separatorem.
@@ -31,7 +31,7 @@ W katalogu `DevTools`, z JDK 17 i Maven 3.9+:
 mvn javafx:run
 ```
 
-Zaimplementowane wzorce mają stałe numery 1–9, używane także w komentarzach kodu:
+Wzorce z laboratorium 1 mają stałe numery 1–9, używane także w komentarzach kodu:
 
 1. **Simple Factory**
 2. **Builder**
@@ -42,4 +42,17 @@ Zaimplementowane wzorce mają stałe numery 1–9, używane także w komentarzac
 7. **Facade**
 8. **Proxy**
 9. **Bridge**
+
+## Laboratorium 2
+
+Pierwszy etap: **8. Strategy** — klasy `Validate`, `Format` i `Minify` implementują
+interfejs `Operation` w pakiecie `core.json.operations`; każdy typ ma własny plik.
+Ich obiekty są dostępne jako `VALIDATE`, `FORMAT` i `MINIFY`.
+Dotychczasowy `JsonTool.Jackson.execute()` w pakiecie `core` parsuje dane raz
+i wykonuje przekazaną strategię. Widok `JsonTabView` wybiera ją przyciskiem,
+a fasada i dekorator czasu przekazują ją dalej. Nową operację dodaje się jako
+klasę implementującą `Operation`.
+
+Nowy układ osobnych plików dotyczy strategii; pozostałe klasy porządkujemy
+stopniowo przy kolejnych zmianach.
 

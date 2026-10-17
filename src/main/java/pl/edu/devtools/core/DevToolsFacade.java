@@ -1,6 +1,8 @@
 package pl.edu.devtools.core;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import pl.edu.devtools.core.json.operations.Operation;
+
 import java.io.IOException;
 import java.net.URI;
 import java.util.List;
@@ -19,7 +21,7 @@ public final class DevToolsFacade {
         this.processes = processes;
         /**
          * Tydzień 1, Wzorzec 6/9: Decorator, zastosowanie 2.
-        ** Każda walidacja i formatowanie JSON-a w tej fasadzie przechodzą przez
+        ** Każda operacja JSON-a w tej fasadzie przechodzi przez
         **dekorator Timed, który dodaje pomiar czasu do przekazanego narzędzia.
         */
         this.json = new JsonTool.Timed(json);
@@ -35,8 +37,8 @@ public final class DevToolsFacade {
         return processes.stop(pid);
     }
 
-    public String json(String input, boolean format) throws IOException {
-        return json.execute(input, format);
+    public String json(String input, Operation operation) throws IOException {
+        return json.execute(input, operation);
     }
 
     public double jsonMillis() {
