@@ -16,16 +16,17 @@ public final class UrlSession {
         return batch;
     }
 
-    public void load(UrlNode.Group batch) {
-        Objects.requireNonNull(batch);
+    public void load(UrlNode.Group original) {
+        Objects.requireNonNull(original);
         /**
          * Tydzień 1, Wzorzec 3/9: Prototype, zastosowanie 3.
          * Zapamiętuje głęboką kopię wygenerowanego podglądu. Usuwanie adresów
          * z batch nie zmieni tej kopii używanej przez Przywróć podgląd.
+         * Kopia robocza batch powstaje z zapisanego prototypu.
          */
-        prototype = batch.copy();
+        prototype = original.copy();
+        batch = prototype.copy();
         /** Koniec, Tydzień 1, Wzorzec 3/9: Prototype, zastosowanie 3. */
-        this.batch = batch;
     }
 
     public void clear() {
@@ -34,7 +35,14 @@ public final class UrlSession {
     }
 
     public void remove(UrlNode.Group parent, UrlNode node) {
-        parent.remove(node);
+        if (batch != null && containsGroup(batch, parent)) {
+            parent.remove(node);
+        }
+    }
+
+    private boolean containsGroup(UrlNode.Group root, UrlNode.Group target) {
+        return root == target || root.children().stream()
+                .anyMatch(child -> child instanceof UrlNode.Group group && containsGroup(group, target));
     }
 
     public void restore() {

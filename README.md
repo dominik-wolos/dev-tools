@@ -72,6 +72,8 @@ Podczas iteracji nie należy zmieniać drzewa; otwieranie używa jego kopii.
 Czwarty etap: **1. Command** — `RemoveUrlCommand` i `RestorePreviewCommand`
 w pakiecie `core.urls.commands` implementują `Command.execute()`. Polecenia
 przechowują parametry operacji, a `UrlSession` zarządza podglądem i prototypem.
+Sesja zapisuje niezależny prototyp i edytuje jego kopię roboczą; przywrócenie
+ponownie klonuje prototyp. Drzewo przekazane do sesji pozostaje niezależne.
 Przyciski zakładki URLs wywołują komendy przez wspólny interfejs; model i komendy
 można uruchamiać oraz testować bez JavaFX. Każdy typ ma własny plik.
 
