@@ -11,6 +11,26 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class UrlCommandsTest {
     @Test
+    void editsAffectOnlyTheWorkingCopyAndRestoreUsesTheSavedPrototype() {
+        var original = new UrlNode.Builder().template("localhost/{id}").parameters("1,2\n3").build();
+        var session = new UrlSession();
+        session.load(original);
+        var originalParent = (UrlNode.Group) original.children().get(0);
+        new RemoveUrlCommand(session, originalParent, originalParent.children().get(0)).execute();
+        var parent = (UrlNode.Group) session.batch().children().get(0);
+        new RemoveUrlCommand(session, parent, parent.children().get(0)).execute();
+        session.batch().add(new UrlNode.Link(URI.create("http://localhost/4")));
+        assertEquals(List.of("/2", "/3", "/4"), paths(session));
+        assertEquals(List.of("/1", "/2", "/3"), original.urls().stream().map(URI::getPath).toList());
+
+        original.remove(original.children().get(1));
+        assertEquals(List.of("/2", "/3", "/4"), paths(session));
+        new RestorePreviewCommand(session).execute();
+        assertEquals(List.of("/1", "/2", "/3"), paths(session));
+        assertEquals(List.of("/1", "/2"), original.urls().stream().map(URI::getPath).toList());
+    }
+
+    @Test
     void commandsCanBeQueuedBeforeExecution() {
         var session = session("1,2\n3");
         var original = session.batch();
