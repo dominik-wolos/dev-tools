@@ -1,6 +1,9 @@
 package pl.edu.devtools.core.urls;
 
 import pl.edu.devtools.core.UrlNode;
+import pl.edu.devtools.core.urls.states.EmptyState;
+import pl.edu.devtools.core.urls.states.ReadyState;
+import pl.edu.devtools.core.urls.states.UrlState;
 
 import java.util.Objects;
 
@@ -12,12 +15,14 @@ public final class UrlSession {
     private UrlNode.Group batch;
     private UrlNode.Group prototype;
     private final UrlHistory history = new UrlHistory();
+    private UrlState state = new EmptyState();
 
     public UrlNode.Group batch() {
         return batch;
     }
 
     public void load(UrlNode.Group original) {
+        state.requireEditable();
         Objects.requireNonNull(original);
         /**
          * Tydzień 1, Wzorzec 3/9: Prototype, zastosowanie 3.
@@ -29,15 +34,19 @@ public final class UrlSession {
         batch = prototype.copy();
         /** Koniec, Tydzień 1, Wzorzec 3/9: Prototype, zastosowanie 3. */
         history.clear();
+        state = new ReadyState();
     }
 
     public void clear() {
+        state.requireEditable();
         batch = null;
         prototype = null;
         history.clear();
+        state = new EmptyState();
     }
 
     public void remove(UrlNode.Group parent, UrlNode node) {
+        state.requireEditable();
         if (batch != null && containsGroup(batch, parent) && parent.children().contains(node)) {
             remember();
             parent.remove(node);
@@ -50,6 +59,7 @@ public final class UrlSession {
     }
 
     public void restore() {
+        state.requireEditable();
         if (prototype != null) {
             /**
              * Tydzień 1, Wzorzec 3/9: Prototype, zastosowanie 2.
@@ -72,7 +82,7 @@ public final class UrlSession {
     /** Koniec, Tydzień 2, Wzorzec 5: Memento, zastosowanie 2. */
 
     public boolean canUndo() {
-        return history.previous() != null;
+        return canEdit() && history.previous() != null;
     }
 
     /**
@@ -80,6 +90,7 @@ public final class UrlSession {
      * Jednokrotne wywołanie odtworzenia migawki przywraca ostatni stan batch.
      */
     public void undo() {
+        state.requireEditable();
         UrlMemento previous = history.previous();
         if (previous != null) {
             batch = previous.restore();
@@ -87,5 +98,28 @@ public final class UrlSession {
         }
     }
     /** Koniec, Tydzień 2, Wzorzec 5: Memento, zastosowanie 3. */
+
+    /**
+     * Tydzień 2, Wzorzec 7: State, zastosowanie 2.
+     * Kontekst deleguje wywołanie przejść i dostępność edycji do bieżącego stanu.
+     */
+    public boolean canEdit() {
+        return state.canEdit();
+    }
+
+    public UrlNode.Group beginOpening() {
+        UrlState next = state.beginOpening();
+        if (!batch.iterator().hasNext()) {
+            throw new IllegalStateException("Podgląd jest pusty. Przywróć adresy lub zmień parametry.");
+        }
+        UrlNode.Group snapshot = batch.copy();
+        state = next;
+        return snapshot;
+    }
+
+    public void finishOpening() {
+        state = state.finishOpening();
+    }
+    /** Koniec, Tydzień 2, Wzorzec 7: State, zastosowanie 2. */
 }
 /** Koniec, Tydzień 2, Wzorzec 1: Command, zastosowanie 2. */

@@ -84,6 +84,14 @@ lub przywróceniem; `UndoPreviewCommand` odtwarza go i zużywa historię.
 Nowe generowanie i zmiana formularza czyszczą historię. Prototyp nadal służy
 do przywracania całego pierwotnego zestawu, niezależnie od cofania ostatniej zmiany.
 
+Szósty etap: **7. State** — `EmptyState`, `ReadyState` i `OpeningState` w pakiecie
+`core.urls.states` określają dostępność edycji i przejścia otwierania.
+`UrlSession` deleguje do bieżącego stanu; podczas otwierania odrzuca zmiany
+i ponowny start. Widok blokuje formularz i akcje do zakończenia zadania,
+zarówno po sukcesie, jak i błędzie. Historia cofania pozostaje zachowana.
+Gotowość oznacza wygenerowany podgląd; jeśli usunięto wszystkie adresy,
+otwieranie jest odrzucane, ale przywracanie i cofanie nadal działają.
+
 Nowy układ osobnych plików dotyczy dodawanych wzorców; pozostałe klasy
 porządkujemy stopniowo przy kolejnych zmianach.
 
