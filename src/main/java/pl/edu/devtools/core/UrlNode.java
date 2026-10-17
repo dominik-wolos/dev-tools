@@ -5,15 +5,19 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
-// Tydzień 1, Wzorzec 5/9: Composite, zastosowanie 1.
-// Pojedynczy URL i zagnieżdżona grupa mają wspólny interfejs urls().
+/**
+ * Tydzień 1, Wzorzec 5/9: Composite, zastosowanie 1.
+ * Pojedynczy URL i zagnieżdżona grupa mają wspólny interfejs urls().
+ */
 public interface UrlNode {
     List<URI> urls();
 
     UrlNode copy();
 
-    // Tydzień 1, Wzorzec 1/9: Simple Factory, zastosowanie 1.
-    // Na podstawie liczby adresów wybiera konkretny produkt: Link albo Group.
+    /**
+     * Tydzień 1, Wzorzec 1/9: Simple Factory, zastosowanie 1.
+     * Na podstawie liczby adresów wybiera konkretny produkt: Link albo Group.
+     */
     static UrlNode create(String label, List<URI> addresses) {
         if (addresses.isEmpty()) {
             throw new IllegalArgumentException("Lista adresów jest pusta.");
@@ -25,7 +29,7 @@ public interface UrlNode {
         addresses.forEach(uri -> group.add(new Link(uri)));
         return group;
     }
-    // Koniec, Tydzień 1, Wzorzec 1/9: Simple Factory, zastosowanie 1.
+    /** Koniec, Tydzień 1, Wzorzec 1/9: Simple Factory, zastosowanie 1. */
 
     record Link(URI uri) implements UrlNode {
         @Override
@@ -77,26 +81,30 @@ public interface UrlNode {
             return children.stream().flatMap(child -> child.urls().stream()).toList();
         }
 
-        // Tydzień 1, Wzorzec 3/9: Prototype, zastosowanie 1.
-        // Kopia ma osobną listę i rekurencyjnie kopiuje dzieci, aby edycja podglądu
-        // nie zmieniała prototypu używanego przez przycisk przywracania.
+        /**
+         * Tydzień 1, Wzorzec 3/9: Prototype, zastosowanie 1.
+         * Kopia ma osobną listę i rekurencyjnie kopiuje dzieci, aby edycja podglądu
+         * nie zmieniała prototypu używanego przez przycisk przywracania.
+         */
         @Override
         public Group copy() {
             Group result = new Group(label);
             children.forEach(child -> result.add(child.copy()));
             return result;
         }
-        // Koniec, Tydzień 1, Wzorzec 3/9: Prototype, zastosowanie 1.
+        /** Koniec, Tydzień 1, Wzorzec 3/9: Prototype, zastosowanie 1.*/
 
         @Override
         public String toString() {
             return label + " (" + urls().size() + ")";
         }
     }
-    // Koniec, Tydzień 1, Wzorzec 5/9: Composite, zastosowanie 1.
+    /** Koniec, Tydzień 1, Wzorzec 5/9: Composite, zastosowanie 1.*/
 
-    // Tydzień 1, Wzorzec 2/9: Builder, zastosowanie 1.
-    // Składa zestaw z szablonu i parametrów; build() sprawdza placeholder i adresy.
+    /**
+     * Tydzień 1, Wzorzec 2/9: Builder, zastosowanie 1.
+     * Składa zestaw z szablonu i parametrów; build() sprawdza placeholder i adresy.
+     */
     final class Builder {
         private static final Pattern PLACEHOLDER = Pattern.compile("\\{([A-Za-z][A-Za-z0-9_]*)}");
         private String template = "";
@@ -145,11 +153,12 @@ public interface UrlNode {
                     }
                 }
                 if (!addresses.isEmpty()) {
-                    // Tydzień 1, Wzorzec 1/9: Simple Factory, zastosowanie 2.
-                    // Podgląd URL-i: fabryka wybiera Link dla jednego adresu w wierszu
-                    // albo Group dla kilku; builder dodaje gotowy węzeł do zestawu.
+                    /** Tydzień 1, Wzorzec 1/9: Simple Factory, zastosowanie 2.
+                    Podgląd URL-i: fabryka wybiera Link dla jednego adresu w wierszu
+                     albo Group dla kilku; builder dodaje gotowy węzeł do zestawu.
+                     */
                     result.add(UrlNode.create("Wiersz " + lineNumber, addresses));
-                    // Koniec, Tydzień 1, Wzorzec 1/9: Simple Factory, zastosowanie 2.
+                    /** Koniec, Tydzień 1, Wzorzec 1/9: Simple Factory, zastosowanie 2.*/
                 }
             }
             if (result.children().isEmpty()) {
@@ -158,5 +167,5 @@ public interface UrlNode {
             return result;
         }
     }
-    // Koniec, Tydzień 1, Wzorzec 2/9: Builder, zastosowanie 1.
+    /** Koniec, Tydzień 1, Wzorzec 2/9: Builder, zastosowanie 1.*/
 }

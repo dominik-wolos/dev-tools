@@ -21,11 +21,12 @@ import java.util.function.Supplier;
 
 public class DevToolsApplication extends Application {
     private final DevToolsFacade tools = new DevToolsFacade(
-            // Tydzień 1, Wzorzec 8/9: Proxy, zastosowanie 2.
-            // Fasada dostaje Guarded zamiast bezpośredniego dostępu do SystemProcesses;
-            // każde żądanie Zatrzymaj trafia więc najpierw do kontroli chronionych PID-ów.
+            /** Tydzień 1, Wzorzec 8/9: Proxy, zastosowanie 2.
+            * Fasada dostaje Guarded zamiast bezpośredniego dostępu do SystemProcesses;
+            * każde żądanie Zatrzymaj trafia więc najpierw do kontroli chronionych PID-ów.
+             */
             new Processes.Guarded(new Processes.SystemProcesses(), ProcessHandle.current().pid()),
-            // Koniec, Tydzień 1, Wzorzec 8/9: Proxy, zastosowanie 2.
+            /** Koniec, Tydzień 1, Wzorzec 8/9: Proxy, zastosowanie 2.*/
             new JsonTool.Jackson(), new DesktopBrowser());
 
     @Override

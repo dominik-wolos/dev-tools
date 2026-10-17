@@ -29,8 +29,10 @@ public interface JsonTool {
         }
     }
 
-    // Tydzień 1, Wzorzec 6/9: Decorator, zastosowanie 1.
-    // Opakowanie zachowuje interfejs narzędzia i mierzy czas także przy błędzie JSON-a.
+    /**
+     * Tydzień 1, Wzorzec 6/9: Decorator, zastosowanie 1.
+     * Opakowanie zachowuje interfejs narzędzia i mierzy czas także przy błędzie JSON-a.
+     */
     final class Timed implements JsonTool {
         private final JsonTool delegate;
         private long elapsedNanos;
@@ -53,5 +55,5 @@ public interface JsonTool {
             return elapsedNanos / 1_000_000.0;
         }
     }
-    // Koniec, Tydzień 1, Wzorzec 6/9: Decorator, zastosowanie 1.
+    /** Koniec, Tydzień 1, Wzorzec 6/9: Decorator, zastosowanie 1.*/
 }

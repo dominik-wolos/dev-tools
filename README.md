@@ -30,6 +30,7 @@ W katalogu `DevTools`, z JDK 17 i Maven 3.9+:
 ```bash
 mvn javafx:run
 ```
+
 Zaimplementowane wzorce mają stałe numery 1–9, używane także w komentarzach kodu:
 
 1. **Simple Factory**
@@ -41,3 +42,4 @@ Zaimplementowane wzorce mają stałe numery 1–9, używane także w komentarzac
 7. **Facade**
 8. **Proxy**
 9. **Bridge**
+

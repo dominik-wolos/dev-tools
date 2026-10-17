@@ -5,9 +5,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.util.List;
 
-// Tydzień 1, Wzorzec 9/9: Bridge, zastosowanie 1.
-// Formaty Text/Json są niezależne od miejsca zapisu Output: pliku albo schowka.
-// Konkretne implementacje Output znajdują się w osobnych plikach pakietu infrastructure.
+/**
+ * Tydzień 1, Wzorzec 9/9: Bridge, zastosowanie 1.
+ * Formaty Text/Json są niezależne od miejsca zapisu Output: pliku albo schowka.
+ * Konkretne implementacje Output znajdują się w osobnych plikach pakietu infrastructure.
+ */
 public abstract class Report {
     @FunctionalInterface
     public interface Output {
@@ -51,4 +53,4 @@ public abstract class Report {
         }
     }
 }
-// Koniec, Tydzień 1, Wzorzec 9/9: Bridge, zastosowanie 1.
+/** Koniec, Tydzień 1, Wzorzec 9/9: Bridge, zastosowanie 1.*/

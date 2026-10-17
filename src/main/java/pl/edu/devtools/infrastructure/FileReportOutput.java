@@ -7,8 +7,10 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-// Tydzień 1, Wzorzec 9/9: Bridge, zastosowanie 2.
-// Implementacja miejsca zapisu; nie zna formatu TXT/JSON ani kontrolek aplikacji.
+/**
+ * Tydzień 1, Wzorzec 9/9: Bridge, zastosowanie 2.
+ * Implementacja miejsca zapisu; nie zna formatu TXT/JSON ani kontrolek aplikacji.
+ */
 public final class FileReportOutput implements Report.Output {
     private final Path path;
 
@@ -21,4 +23,4 @@ public final class FileReportOutput implements Report.Output {
         Files.writeString(path, text, StandardCharsets.UTF_8);
     }
 }
-// Koniec, Tydzień 1, Wzorzec 9/9: Bridge, zastosowanie 2.
+/** Koniec, Tydzień 1, Wzorzec 9/9: Bridge, zastosowanie 2.*/
