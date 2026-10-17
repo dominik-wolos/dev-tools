@@ -63,6 +63,12 @@ i `JsonReport`. Szablon zarządza przebiegiem, podklasy odpowiadają za format,
 a implementacje `ReportOutput` za zapis. Fasada przyjmuje gotowy `Report`;
 wybór formatu i miejsca zapisu pozostaje przy formularzu eksportu.
 
-Nowy układ osobnych plików dotyczy strategii i raportów; pozostałe klasy
+Trzeci etap: **3. Iterator** — `UrlIterator` w pakiecie `core.urls` wykonuje
+leniwe przejście DFS po iteratorach dzieci. `UrlNode` implementuje `Iterable<URI>`;
+otwieranie i eksport korzystają z tej samej kolejności, zachowując duplikaty.
+Każde wywołanie `iterator()` zwraca niezależny iterator tylko do odczytu.
+Podczas iteracji nie należy zmieniać drzewa; otwieranie używa jego kopii.
+
+Nowy układ osobnych plików dotyczy strategii, raportów i iteratora; pozostałe klasy
 porządkujemy stopniowo przy kolejnych zmianach.
 

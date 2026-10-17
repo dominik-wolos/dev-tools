@@ -228,12 +228,15 @@ class DevToolsTest {
 
     @Test
     void facadeReportsPartialBrowserFailure() {
+        List<URI> attempted = new ArrayList<>();
         var facade = new DevToolsFacade(new Processes.SystemProcesses(), json, uri -> {
+            attempted.add(uri);
             if (uri.getPath().endsWith("2")) { throw new IllegalStateException("browser failed"); }
         });
         var batch = facade.urls("localhost/{id}", "1,2,3");
         var error = assertThrows(IllegalStateException.class, () -> facade.open(batch));
         assertTrue(error.getMessage().contains("Otwarto 1 z 3"));
+        assertEquals(List.of(URI.create("http://localhost/1"), URI.create("http://localhost/2")), attempted);
     }
 
     private DevToolsFacade facade(List<URI> opened) {
