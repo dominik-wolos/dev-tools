@@ -23,12 +23,11 @@ Nowa linia na liście parametrów tworzy osobną grupę URL-i. Inne znaki spoza 
 rozdzielają identyfikatory w tej samej grupie. `1-3` oznacza dwa identyfikatory: `1` i `3`,
 a nie zakres; identyfikatory są nieujemnymi ciągami cyfr.
 
-## Uruchomienie i testy
+## Uruchomienie
 
 W katalogu `DevTools`, z JDK 17 i Maven 3.9+:
 
 ```bash
-mvn test
 mvn javafx:run
 ```
 
