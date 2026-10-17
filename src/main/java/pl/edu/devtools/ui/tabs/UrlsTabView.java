@@ -10,6 +10,7 @@ import pl.edu.devtools.core.urls.UrlSession;
 import pl.edu.devtools.core.urls.commands.Command;
 import pl.edu.devtools.core.urls.commands.RemoveUrlCommand;
 import pl.edu.devtools.core.urls.commands.RestorePreviewCommand;
+import pl.edu.devtools.core.urls.commands.UndoPreviewCommand;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -22,6 +23,7 @@ public final class UrlsTabView {
     private final TreeView<UrlNode> preview = new TreeView<>();
     private final Label status = new Label("Identyfikatory liczbowe; każdy znak inny niż cyfra jest separatorem.");
     private final Button open = new Button("Otwórz URL-e");
+    private final Button undo = new Button("Cofnij");
     private final UrlSession session = new UrlSession();
 
     public UrlsTabView(DevToolsFacade tools) {
@@ -41,15 +43,23 @@ public final class UrlsTabView {
         remove.setOnAction(event -> removeSelected());
         Button restore = new Button("Przywróć podgląd");
         restore.setOnAction(event -> execute(new RestorePreviewCommand(session)));
+        /**
+         * Tydzień 2, Wzorzec 5: Memento, zastosowanie 5.
+         * Przycisk inicjuje wywołanie cofnięcia ostatniej zmiany kopii roboczej.
+         */
+        undo.setDisable(true);
+        undo.setOnAction(event -> execute(new UndoPreviewCommand(session)));
+        /** Koniec, Tydzień 2, Wzorzec 5: Memento, zastosowanie 5. */
         SplitPane editors = new SplitPane(parameters, preview);
         editors.setDividerPositions(0.35);
         VBox.setVgrow(editors, Priority.ALWAYS);
         return new Tab("URLs", new VBox(new ToolBar(new Label("Szablon:"), template, generate, open),
-                new ToolBar(remove, restore, status), editors));
+                new ToolBar(remove, restore, undo, status), editors));
     }
 
     private void invalidate() {
         session.clear();
+        undo.setDisable(true);
         preview.setRoot(null);
         status.setText("Dane zmienione — wygeneruj podgląd.");
     }
@@ -67,6 +77,7 @@ public final class UrlsTabView {
             return true;
         } catch (IllegalArgumentException error) {
             session.clear();
+            undo.setDisable(true);
             preview.setRoot(null);
             status.setText(error.getMessage());
             return false;
@@ -76,6 +87,7 @@ public final class UrlsTabView {
     private void showPreview() {
         UrlNode.Group batch = session.batch();
         preview.setRoot(tree(batch));
+        undo.setDisable(!session.canUndo());
         status.setText("Adresów: " + batch.urls().size() + ". Każdy wiersz listy tworzy grupę.");
     }
 
