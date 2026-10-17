@@ -5,8 +5,10 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.List;
 
-// Tydzień 1, Wzorzec 7/9: Facade, zastosowanie 1.
-// Widoki korzystają z jednej usługi łączącej JSON, procesy, budowanie URL-i i raporty.
+/**
+ * Tydzień 1, Wzorzec 7/9: Facade, zastosowanie 1.
+ * Widoki korzystają z jednej usługi łączącej JSON, procesy, budowanie URL-i i raporty.
+ */
 public final class DevToolsFacade {
     private final Processes processes;
     private final JsonTool.Timed json;

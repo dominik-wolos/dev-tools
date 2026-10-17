@@ -6,8 +6,10 @@ import pl.edu.devtools.core.Report;
 
 import java.io.IOException;
 
-// Tydzień 1, Wzorzec 9/9: Bridge, zastosowanie 3.
-// Implementacja miejsca zapisu: schowek JavaFX, niezależnie od formatu raportu.
+/**
+ * Tydzień 1, Wzorzec 9/9: Bridge, zastosowanie 3.
+ * Implementacja miejsca zapisu: schowek JavaFX, niezależnie od formatu raportu.
+ */
 public final class ClipboardReportOutput implements Report.Output {
     @Override
     public void write(String text) throws IOException {

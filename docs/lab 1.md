@@ -78,31 +78,31 @@ numer 1–9.
 
 | Nr | Wzorzec | Zastosowanie | Plik | Linie | Metody lub elementy |
 | --- | --- | --- | --- | --- | --- |
-| 1 | Simple Factory | 1 | `core/UrlNode.java` | 15–28 | `UrlNode.create()` |
-| 1 | Simple Factory | 2 | `core/UrlNode.java` | 148–152 | `Builder.build()` — wywołanie fabryki dla wiersza parametrów |
-| 2 | Builder | 1 | `core/UrlNode.java` | 98–161 | `Builder.template()`, `parameters()`, `build()` |
-| 2 | Builder | 2 | `core/DevToolsFacade.java` | 47–51 | `urls()` — budowanie zestawu z danych formularza |
-| 3 | Prototype | 1 | `core/UrlNode.java` | 80–89 | `Group.copy()` |
+| 1 | Simple Factory | 1 | `core/UrlNode.java` | 17–32 | `UrlNode.create()` |
+| 1 | Simple Factory | 2 | `core/UrlNode.java` | 156–160 | `Builder.build()` — wywołanie fabryki dla wiersza parametrów |
+| 2 | Builder | 1 | `core/UrlNode.java` | 104–169 | `Builder.template()`, `parameters()`, `build()` |
+| 2 | Builder | 2 | `core/DevToolsFacade.java` | 49–53 | `urls()` — budowanie zestawu z danych formularza |
+| 3 | Prototype | 1 | `core/UrlNode.java` | 84–95 | `Group.copy()` |
 | 3 | Prototype | 2 | `ui/tabs/UrlsTabView.java` | 41–44 | obsługa przycisku Przywróć podgląd w `UrlsTabView.create()` |
 | 3 | Prototype | 3 | `ui/tabs/UrlsTabView.java` | 69–73 | `generate()` — zapis niezależnego prototypu podglądu |
-| 4 | Adapter | 1 | `core/Processes.java` | 12–36 | `SystemProcesses.list()`, `stop()` |
-| 4 | Adapter | 2 | `infrastructure/DesktopBrowser.java` | 9–20 | `DesktopBrowser.open()` |
-| 4 | Adapter | 3 | `core/DevToolsFacade.java` | 27–31 | `processes()` — pobranie danych przez adapter procesów |
-| 4 | Adapter | 4 | `core/DevToolsFacade.java` | 63–67 | `open()` — otwieranie adresu przez adapter przeglądarki |
-| 5 | Composite | 1 | `core/UrlNode.java` | 8–96 | `UrlNode.urls()`, `Link.urls()`, `Group.add()`, `remove()`, `urls()` |
-| 5 | Composite | 2 | `core/DevToolsFacade.java` | 55–59 | `open()` — zebranie adresów z drzewa przez wspólne `urls()` |
-| 6 | Decorator | 1 | `core/JsonTool.java` | 32–56 | `Timed.execute()`, `elapsedMillis()` |
-| 6 | Decorator | 2 | `core/DevToolsFacade.java` | 18–22 | konstruktor — opakowanie narzędzia JSON dekoratorem |
-| 7 | Facade | 1 | `core/DevToolsFacade.java` | 8–86 | `processes()`, `stop()`, `json()`, `urls()`, `open()`, `export()` |
+| 4 | Adapter | 1 | `core/Processes.java` | 12–38 | `SystemProcesses.list()`, `stop()` |
+| 4 | Adapter | 2 | `infrastructure/DesktopBrowser.java` | 9–22 | `DesktopBrowser.open()` |
+| 4 | Adapter | 3 | `core/DevToolsFacade.java` | 29–33 | `processes()` — pobranie danych przez adapter procesów |
+| 4 | Adapter | 4 | `core/DevToolsFacade.java` | 65–69 | `open()` — otwieranie adresu przez adapter przeglądarki |
+| 5 | Composite | 1 | `core/UrlNode.java` | 8–102 | `UrlNode.urls()`, `Link.urls()`, `Group.add()`, `remove()`, `urls()` |
+| 5 | Composite | 2 | `core/DevToolsFacade.java` | 57–61 | `open()` — zebranie adresów z drzewa przez wspólne `urls()` |
+| 6 | Decorator | 1 | `core/JsonTool.java` | 32–58 | `Timed.execute()`, `elapsedMillis()` |
+| 6 | Decorator | 2 | `core/DevToolsFacade.java` | 20–24 | konstruktor — opakowanie narzędzia JSON dekoratorem |
+| 7 | Facade | 1 | `core/DevToolsFacade.java` | 8–88 | `processes()`, `stop()`, `json()`, `urls()`, `open()`, `export()` |
 | 7 | Facade | 2 | `ui/tabs/JsonTabView.java` | 51–55 | `run()` — Waliduj/Formatuj korzysta z fasady |
 | 7 | Facade | 3 | `ui/tabs/UrlsTabView.java` | 64–68 | `generate()` — Podgląd korzysta z fasady |
 | 7 | Facade | 4 | `ui/tabs/ProcessesTabView.java` | 81–93 | `refresh()` — Odśwież korzysta z fasady w tle |
-| 8 | Proxy | 1 | `core/Processes.java` | 38–62 | `Guarded.list()`, `stop()` |
+| 8 | Proxy | 1 | `core/Processes.java` | 40–66 | `Guarded.list()`, `stop()` |
 | 8 | Proxy | 2 | `DevToolsApplication.java` | 24–28 | inicjalizacja `tools` — przekazanie proxy do fasady |
-| 9 | Bridge | 1 | `core/Report.java` | 8–54 | `Report.export()`, `Text.render()`, `Json.render()`, `Output.write()` |
-| 9 | Bridge | 2 | `infrastructure/FileReportOutput.java` | 10–24 | `FileReportOutput.write()` |
-| 9 | Bridge | 3 | `infrastructure/ClipboardReportOutput.java` | 9–21 | `ClipboardReportOutput.write()` |
-| 9 | Bridge | 4 | `core/DevToolsFacade.java` | 78–83 | `export()` — połączenie formatu z miejscem zapisu |
+| 9 | Bridge | 1 | `core/Report.java` | 8–56 | `Report.export()`, `Text.render()`, `Json.render()`, `Output.write()` |
+| 9 | Bridge | 2 | `infrastructure/FileReportOutput.java` | 10–26 | `FileReportOutput.write()` |
+| 9 | Bridge | 3 | `infrastructure/ClipboardReportOutput.java` | 9–23 | `ClipboardReportOutput.write()` |
+| 9 | Bridge | 4 | `core/DevToolsFacade.java` | 80–85 | `export()` — połączenie formatu z miejscem zapisu |
 | 9 | Bridge | 5 | `ui/ReportExportView.java` | 42–46 | `copy()` — połączenie TXT/JSON ze schowkiem |
 | 9 | Bridge | 6 | `ui/ReportExportView.java` | 63–67 | `save()` — połączenie TXT/JSON z plikiem |
 

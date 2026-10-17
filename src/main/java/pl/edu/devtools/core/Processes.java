@@ -9,8 +9,10 @@ public interface Processes {
 
     boolean stop(long pid);
 
-    // Tydzień 1, Wzorzec 4/9: Adapter, zastosowanie 1.
-    // Tłumaczy API ProcessHandle na listę danych aplikacji i operację stop(pid).
+    /**
+     * Tydzień 1, Wzorzec 4/9: Adapter, zastosowanie 1.
+     * Tłumaczy API ProcessHandle na listę danych aplikacji i operację stop(pid).
+     */
     final class SystemProcesses implements Processes {
         @Override
         public List<ProcessRow> list() {
@@ -35,8 +37,10 @@ public interface Processes {
     }
     // Koniec, Tydzień 1, Wzorzec 4/9: Adapter, zastosowanie 1.
 
-    // Tydzień 1, Wzorzec 8/9: Proxy, zastosowanie 1.
-    // Ten sam interfejs; żądanie zatrzymania jest przekazywane po kontroli PID.
+    /**
+     * Tydzień 1, Wzorzec 8/9: Proxy, zastosowanie 1.
+     * Ten sam interfejs; żądanie zatrzymania jest przekazywane po kontroli PID.
+     */
     final class Guarded implements Processes {
         private final Processes delegate;
         private final long ownPid;
