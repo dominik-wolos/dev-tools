@@ -15,17 +15,17 @@ class UrlIteratorTest {
     void traversesNestedGroupsPreservingOrderLeadingZerosAndDuplicates() {
         URI first = URI.create("http://localhost/003");
         URI second = URI.create("http://localhost/2");
-        var root = new UrlNode.Group("root");
-        var nested = new UrlNode.Group("nested");
-        var deeper = new UrlNode.Group("deeper");
-        root.add(new UrlNode.Group("empty"));
+        var root = new UrlGroup("root");
+        var nested = new UrlGroup("nested");
+        var deeper = new UrlGroup("deeper");
+        root.add(new UrlGroup("empty"));
         root.add(nested);
-        nested.add(new UrlNode.Link(first));
+        nested.add(new UrlLink(first));
         nested.add(deeper);
-        deeper.add(new UrlNode.Group("empty"));
-        deeper.add(new UrlNode.Link(first));
-        nested.add(new UrlNode.Link(second));
-        root.add(new UrlNode.Link(second));
+        deeper.add(new UrlGroup("empty"));
+        deeper.add(new UrlLink(first));
+        nested.add(new UrlLink(second));
+        root.add(new UrlLink(second));
 
         var actual = new ArrayList<URI>();
         root.forEach(actual::add);
@@ -34,7 +34,7 @@ class UrlIteratorTest {
 
     @Test
     void iteratorsAreIndependentAndHasNextDoesNotAdvance() {
-        var root = new UrlNode.Builder().template("localhost/{id}").parameters("1,2\n3").build();
+        var root = new UrlBuilder().template("localhost/{id}").parameters("1,2\n3").build();
         var left = root.iterator();
         var right = root.iterator();
         assertTrue(left.hasNext());
@@ -51,10 +51,10 @@ class UrlIteratorTest {
 
     @Test
     void exhaustedIteratorsRejectNextAndRemoval() {
-        var link = new UrlNode.Link(URI.create("http://localhost/1"));
-        var group = new UrlNode.Group("single");
+        var link = new UrlLink(URI.create("http://localhost/1"));
+        var group = new UrlGroup("single");
         group.add(link);
-        for (UrlNode node : List.of(new UrlNode.Group("empty"), link, group)) {
+        for (UrlNode node : List.of(new UrlGroup("empty"), link, group)) {
             var iterator = node.iterator();
             while (iterator.hasNext()) {
                 iterator.next();
@@ -69,7 +69,7 @@ class UrlIteratorTest {
     void visitsChildrenLazilyThroughTheirInterface() {
         var first = new CountingUrlNode(URI.create("http://localhost/1"));
         var second = new CountingUrlNode(URI.create("http://localhost/2"));
-        var root = new UrlNode.Group("root");
+        var root = new UrlGroup("root");
         root.add(first);
         root.add(second);
         var iterator = root.iterator();

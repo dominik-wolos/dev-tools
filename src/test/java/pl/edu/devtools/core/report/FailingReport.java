@@ -10,6 +10,6 @@ final class FailingReport extends Report {
 
     @Override
     protected String render(List<String> lines) throws IOException {
-        throw new IOException("Render failed");
+        throw new IOException("render failed");
     }
 }

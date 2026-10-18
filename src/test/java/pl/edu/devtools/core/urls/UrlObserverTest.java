@@ -1,7 +1,6 @@
 package pl.edu.devtools.core.urls;
 
 import org.junit.jupiter.api.Test;
-import pl.edu.devtools.core.UrlNode;
 import pl.edu.devtools.core.urls.observers.UrlSessionObservable;
 
 import java.util.List;
@@ -65,7 +64,7 @@ class UrlObserverTest {
         assertThrows(IllegalStateException.class, session::beginOpening);
         assertTrue(observer.sizes.isEmpty());
 
-        session.load(new UrlNode.Group("Empty"));
+        session.load(new UrlGroup("Empty"));
         assertThrows(IllegalStateException.class, session::beginOpening);
         assertEquals(List.of(0), observer.sizes);
 
@@ -85,7 +84,7 @@ class UrlObserverTest {
         assertEquals(List.of(0, 2, 2), observer.sizes);
     }
 
-    private UrlNode.Group original() {
-        return new UrlNode.Builder().template("localhost/{id}").parameters("1\n2").build();
+    private UrlGroup original() {
+        return new UrlBuilder().template("localhost/{id}").parameters("1\n2").build();
     }
 }

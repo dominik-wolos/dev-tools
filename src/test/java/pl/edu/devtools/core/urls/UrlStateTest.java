@@ -1,7 +1,6 @@
 package pl.edu.devtools.core.urls;
 
 import org.junit.jupiter.api.Test;
-import pl.edu.devtools.core.UrlNode;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -80,7 +79,7 @@ class UrlStateTest {
         }
     }
 
-    private UrlNode.Group original() {
-        return new UrlNode.Builder().template("localhost/{id}").parameters("1\n2").build();
+    private UrlGroup original() {
+        return new UrlBuilder().template("localhost/{id}").parameters("1\n2").build();
     }
 }

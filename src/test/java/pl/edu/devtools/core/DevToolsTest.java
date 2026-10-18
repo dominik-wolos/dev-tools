@@ -4,12 +4,20 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
+import pl.edu.devtools.core.json.JacksonJsonTool;
+import pl.edu.devtools.core.json.TimedJsonTool;
 import pl.edu.devtools.core.json.operations.ValueOperation;
+import pl.edu.devtools.core.processes.GuardedProcesses;
 import pl.edu.devtools.core.report.JsonReport;
 import pl.edu.devtools.core.report.Report;
 import pl.edu.devtools.core.report.ReportOutput;
 import pl.edu.devtools.core.report.TextReport;
+import pl.edu.devtools.core.urls.UrlBuilder;
+import pl.edu.devtools.core.urls.UrlGroup;
+import pl.edu.devtools.core.urls.UrlLink;
+import pl.edu.devtools.core.urls.UrlNodeFactory;
 import pl.edu.devtools.infrastructure.FileReportOutput;
+import pl.edu.devtools.infrastructure.SystemProcesses;
 
 import java.io.IOException;
 import java.net.URI;
@@ -17,14 +25,13 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static pl.edu.devtools.core.json.operations.Operation.*;
 
 class DevToolsTest {
-    private final JsonTool json = new JsonTool.Jackson();
+    private final JsonTool json = new JacksonJsonTool();
 
     @Test
     void validatesObjectsArraysAndScalarValues() throws IOException {
@@ -77,7 +84,7 @@ class DevToolsTest {
 
     @Test
     void decoratorPreservesResultAndException() throws IOException {
-        var measured = new JsonTool.Timed(json);
+        var measured = new TimedJsonTool(json);
         assertEquals(json.execute("{}", FORMAT), measured.execute("{}", FORMAT));
         assertTrue(measured.elapsedMillis() >= 0);
         assertThrows(JsonProcessingException.class, () -> measured.execute("{", FORMAT));
@@ -86,7 +93,7 @@ class DevToolsTest {
 
     @Test
     void supportsMixedSeparatorsAndPreservesOrderLeadingZerosAndDuplicates() {
-        var batch = new UrlNode.Builder().template("localhost/orders/{orderID}")
+        var batch = new UrlBuilder().template("localhost/orders/{orderID}")
                 .parameters("1, 2;003 | 4\t5\n6abc7/7").build();
         assertEquals(List.of("1", "2", "003", "4", "5", "6", "7", "7").stream()
                 .map(id -> URI.create("http://localhost/orders/" + id)).toList(), batch.urls());
@@ -94,7 +101,7 @@ class DevToolsTest {
 
     @Test
     void supportsPortsQueryParametersAndRepeatedPlaceholder() {
-        var batch = new UrlNode.Builder().template("https://localhost:8443/orders/{id}?same={id}")
+        var batch = new UrlBuilder().template("https://localhost:8443/orders/{id}?same={id}")
                 .parameters("42").build();
         assertEquals(List.of(URI.create("https://localhost:8443/orders/42?same=42")), batch.urls());
     }
@@ -102,7 +109,7 @@ class DevToolsTest {
     @Test
     void supportsAnyLengthNumericIdentifier() {
         String id = "123456789012345678901234567890";
-        var batch = new UrlNode.Builder().template("localhost/{id}").parameters(id).build();
+        var batch = new UrlBuilder().template("localhost/{id}").parameters(id).build();
         assertEquals("http://localhost/" + id, batch.urls().get(0).toString());
     }
 
@@ -110,10 +117,10 @@ class DevToolsTest {
     void rejectsMissingInputsAndAmbiguousTemplates() {
         for (String template : List.of("", "localhost/orders", "localhost/{a}/{b}", "localhost/{bad-name}")) {
             assertThrows(IllegalArgumentException.class,
-                    () -> new UrlNode.Builder().template(template).parameters("1").build());
+                    () -> new UrlBuilder().template(template).parameters("1").build());
         }
         assertThrows(IllegalArgumentException.class,
-                () -> new UrlNode.Builder().template("localhost/{id}").parameters("abc, ;").build());
+                () -> new UrlBuilder().template("localhost/{id}").parameters("abc, ;").build());
     }
 
     @Test
@@ -121,7 +128,7 @@ class DevToolsTest {
         for (String template : List.of("file:///tmp/{id}", "ftp://host/{id}", "https:///{id}",
                 "http://bad host/{id}", "http://host:99999/{id}", "http://user:pass@host/{id}")) {
             assertThrows(IllegalArgumentException.class,
-                    () -> new UrlNode.Builder().template(template).parameters("1").build(), template);
+                    () -> new UrlBuilder().template(template).parameters("1").build(), template);
         }
     }
 
@@ -129,24 +136,24 @@ class DevToolsTest {
     void factoryChoosesConcreteProductByInput() {
         URI first = URI.create("http://localhost/1");
         URI second = URI.create("http://localhost/2");
-        assertInstanceOf(UrlNode.Link.class, UrlNode.create("one", List.of(first)));
-        assertInstanceOf(UrlNode.Group.class, UrlNode.create("two", List.of(first, second)));
-        assertThrows(IllegalArgumentException.class, () -> UrlNode.create("empty", List.of()));
+        assertInstanceOf(UrlLink.class, new UrlNodeFactory().create("one", List.of(first)));
+        assertInstanceOf(UrlGroup.class, new UrlNodeFactory().create("two", List.of(first, second)));
+        assertThrows(IllegalArgumentException.class, () -> new UrlNodeFactory().create("empty", List.of()));
     }
 
     @Test
     void compositeRecursivelyTraversesGroups() {
-        var batch = new UrlNode.Builder().template("localhost/{id}").parameters("1,2\n3,4").build();
+        var batch = new UrlBuilder().template("localhost/{id}").parameters("1,2\n3,4").build();
         assertEquals(2, batch.children().size());
-        assertInstanceOf(UrlNode.Group.class, batch.children().get(0));
+        assertInstanceOf(UrlGroup.class, batch.children().get(0));
         assertEquals(4, batch.urls().size());
     }
 
     @Test
     void prototypeCreatesIndependentNestedChildren() {
-        var original = new UrlNode.Builder().template("localhost/{id}").parameters("1,2\n3").build();
+        var original = new UrlBuilder().template("localhost/{id}").parameters("1,2\n3").build();
         var copy = original.copy();
-        var nestedCopy = (UrlNode.Group) copy.children().get(0);
+        var nestedCopy = (UrlGroup) copy.children().get(0);
         assertNotSame(original.children().get(0), nestedCopy);
         nestedCopy.remove(nestedCopy.children().get(0));
         assertEquals(2, copy.urls().size());
@@ -156,8 +163,8 @@ class DevToolsTest {
 
     @Test
     void compositeRejectsDirectAndIndirectCycles() {
-        var parent = new UrlNode.Group("parent");
-        var child = new UrlNode.Group("child");
+        var parent = new UrlGroup("parent");
+        var child = new UrlGroup("child");
         parent.add(child);
         assertThrows(IllegalArgumentException.class, () -> parent.add(parent));
         assertThrows(IllegalArgumentException.class, () -> child.add(parent));
@@ -165,24 +172,20 @@ class DevToolsTest {
 
     @Test
     void proxyBlocksOwnAndSystemPidAndDelegatesOtherRequests() {
-        AtomicLong stopped = new AtomicLong(-1);
-        Processes underlying = new Processes() {
-            public List<ProcessRow> list() { return List.of(); }
-            public boolean stop(long pid) { stopped.set(pid); return true; }
-        };
-        var proxy = new Processes.Guarded(underlying, 123);
+        var underlying = new RecordingProcesses();
+        var proxy = new GuardedProcesses(underlying, 123);
         for (long pid : new long[]{-1, 0, 1, 123}) {
             assertThrows(IllegalArgumentException.class, () -> proxy.stop(pid));
         }
-        assertEquals(-1, stopped.get());
+        assertEquals(-1, underlying.stoppedPid());
         assertTrue(proxy.stop(456));
-        assertEquals(456, stopped.get());
+        assertEquals(456, underlying.stoppedPid());
         assertTrue(proxy.list().isEmpty());
     }
 
     @Test
     void systemAdapterListsCurrentJvmWithoutStoppingAnything() {
-        var rows = new Processes.SystemProcesses().list();
+        var rows = new SystemProcesses().list();
         assertTrue(rows.stream().anyMatch(row -> row.pid() == ProcessHandle.current().pid()));
         assertTrue(rows.stream().allMatch(row -> row.pid() > 0 && row.name() != null));
     }
@@ -229,7 +232,7 @@ class DevToolsTest {
     @Test
     void facadeReportsPartialBrowserFailure() {
         List<URI> attempted = new ArrayList<>();
-        var facade = new DevToolsFacade(new Processes.SystemProcesses(), json, uri -> {
+        var facade = new DevToolsFacade(new SystemProcesses(), json, uri -> {
             attempted.add(uri);
             if (uri.getPath().endsWith("2")) { throw new IllegalStateException("browser failed"); }
         });
@@ -240,6 +243,6 @@ class DevToolsTest {
     }
 
     private DevToolsFacade facade(List<URI> opened) {
-        return new DevToolsFacade(new Processes.SystemProcesses(), json, opened::add);
+        return new DevToolsFacade(new SystemProcesses(), json, opened::add);
     }
 }

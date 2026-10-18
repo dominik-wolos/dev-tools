@@ -1,7 +1,9 @@
 package pl.edu.devtools.core.urls.commands;
 
 import org.junit.jupiter.api.Test;
-import pl.edu.devtools.core.UrlNode;
+import pl.edu.devtools.core.urls.UrlBuilder;
+import pl.edu.devtools.core.urls.UrlGroup;
+import pl.edu.devtools.core.urls.UrlLink;
 import pl.edu.devtools.core.urls.UrlSession;
 
 import java.net.URI;
@@ -12,14 +14,14 @@ import static org.junit.jupiter.api.Assertions.*;
 class UrlCommandsTest {
     @Test
     void editsAffectOnlyTheWorkingCopyAndRestoreUsesTheSavedPrototype() {
-        var original = new UrlNode.Builder().template("localhost/{id}").parameters("1,2\n3").build();
+        var original = new UrlBuilder().template("localhost/{id}").parameters("1,2\n3").build();
         var session = new UrlSession();
         session.load(original);
-        var originalParent = (UrlNode.Group) original.children().get(0);
+        var originalParent = (UrlGroup) original.children().get(0);
         new RemoveUrlCommand(session, originalParent, originalParent.children().get(0)).execute();
-        var parent = (UrlNode.Group) session.batch().children().get(0);
+        var parent = (UrlGroup) session.batch().children().get(0);
         new RemoveUrlCommand(session, parent, parent.children().get(0)).execute();
-        session.batch().add(new UrlNode.Link(URI.create("http://localhost/4")));
+        session.batch().add(new UrlLink(URI.create("http://localhost/4")));
         assertEquals(List.of("/2", "/3", "/4"), paths(session));
         assertEquals(List.of("/1", "/2", "/3"), original.urls().stream().map(URI::getPath).toList());
 
@@ -34,7 +36,7 @@ class UrlCommandsTest {
     void commandsCanBeQueuedBeforeExecution() {
         var session = session("1,2\n3");
         var original = session.batch();
-        var parent = (UrlNode.Group) original.children().get(0);
+        var parent = (UrlGroup) original.children().get(0);
         List<Command> commands = List.of(
                 new RemoveUrlCommand(session, parent, parent.children().get(0)),
                 new RestorePreviewCommand(session));
@@ -66,8 +68,8 @@ class UrlCommandsTest {
         Command restore = new RestorePreviewCommand(session);
         restore.execute();
         assertNull(session.batch());
-        session.load(new UrlNode.Builder().template("localhost/{id}").parameters("1").build());
-        session.load(new UrlNode.Builder().template("localhost/{id}").parameters("2,3").build());
+        session.load(new UrlBuilder().template("localhost/{id}").parameters("1").build());
+        session.load(new UrlBuilder().template("localhost/{id}").parameters("2,3").build());
         new RemoveUrlCommand(session, session.batch(), session.batch().children().get(0)).execute();
         assertTrue(paths(session).isEmpty());
         restore.execute();
@@ -79,7 +81,7 @@ class UrlCommandsTest {
 
     private UrlSession session(String parameters) {
         var session = new UrlSession();
-        session.load(new UrlNode.Builder().template("localhost/{id}").parameters(parameters).build());
+        session.load(new UrlBuilder().template("localhost/{id}").parameters(parameters).build());
         return session;
     }
 

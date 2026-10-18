@@ -13,17 +13,17 @@ import java.util.Objects;
  * Odbiorca poleceń przechowuje podgląd i wykonuje operacje na jego danych.
  */
 public final class UrlSession extends UrlSessionObservableSupport {
-    private UrlNode.Group batch;
-    private UrlNode.Group prototype;
+    private UrlGroup batch;
+    private UrlGroup prototype;
     private final UrlHistory history = new UrlHistory();
     private UrlState state = new EmptyState();
 
     @Override
-    public UrlNode.Group batch() {
+    public UrlGroup batch() {
         return batch;
     }
 
-    public void load(UrlNode.Group original) {
+    public void load(UrlGroup original) {
         state.requireEditable();
         Objects.requireNonNull(original);
         /**
@@ -49,7 +49,7 @@ public final class UrlSession extends UrlSessionObservableSupport {
         notifyObservers();
     }
 
-    public void remove(UrlNode.Group parent, UrlNode node) {
+    public void remove(UrlGroup parent, UrlNode node) {
         state.requireEditable();
         if (batch != null && containsGroup(batch, parent) && parent.children().contains(node)) {
             remember();
@@ -58,9 +58,9 @@ public final class UrlSession extends UrlSessionObservableSupport {
         }
     }
 
-    private boolean containsGroup(UrlNode.Group root, UrlNode.Group target) {
+    private boolean containsGroup(UrlGroup root, UrlGroup target) {
         return root == target || root.children().stream()
-                .anyMatch(child -> child instanceof UrlNode.Group group && containsGroup(group, target));
+                .anyMatch(child -> child instanceof UrlGroup group && containsGroup(group, target));
     }
 
     public void restore() {
@@ -70,7 +70,7 @@ public final class UrlSession extends UrlSessionObservableSupport {
              * Tydzień 1, Wzorzec 3/9: Prototype, zastosowanie 2.
              * Odtworzenie niezależnego drzewa z prototypu zapisanego po generowaniu.
              */
-            UrlNode.Group restored = prototype.copy();
+            UrlGroup restored = prototype.copy();
             remember();
             batch = restored;
             /** Koniec, Tydzień 1, Wzorzec 3/9: Prototype, zastosowanie 2. */
@@ -116,12 +116,12 @@ public final class UrlSession extends UrlSessionObservableSupport {
         return state.canEdit();
     }
 
-    public UrlNode.Group beginOpening() {
+    public UrlGroup beginOpening() {
         UrlState next = state.beginOpening();
         if (!batch.iterator().hasNext()) {
             throw new IllegalStateException("Podgląd jest pusty. Przywróć adresy lub zmień parametry.");
         }
-        UrlNode.Group snapshot = batch.copy();
+        UrlGroup snapshot = batch.copy();
         state = next;
         notifyObservers();
         return snapshot;
