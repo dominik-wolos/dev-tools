@@ -1,7 +1,10 @@
 package pl.edu.devtools.core;
 
+import pl.edu.devtools.core.json.TimedJsonTool;
 import pl.edu.devtools.core.json.operations.Operation;
 import pl.edu.devtools.core.report.Report;
+import pl.edu.devtools.core.urls.UrlBuilder;
+import pl.edu.devtools.core.urls.UrlGroup;
 
 import java.io.IOException;
 import java.net.URI;
@@ -14,7 +17,7 @@ import java.util.stream.StreamSupport;
  */
 public final class DevToolsFacade {
     private final Processes processes;
-    private final JsonTool.Timed json;
+    private final TimedJsonTool json;
     private final Browser browser;
 
     public DevToolsFacade(Processes processes, JsonTool json, Browser browser) {
@@ -22,9 +25,9 @@ public final class DevToolsFacade {
         /**
          * Tydzień 1, Wzorzec 6/9: Decorator, zastosowanie 2.
         ** Każda operacja JSON-a w tej fasadzie przechodzi przez
-        **dekorator Timed, który dodaje pomiar czasu do przekazanego narzędzia.
+        **dekorator TimedJsonTool, który dodaje pomiar czasu do przekazanego narzędzia.
         */
-        this.json = new JsonTool.Timed(json);
+        this.json = new TimedJsonTool(json);
         /** Koniec, Tydzień 1, Wzorzec 6/9: Decorator, zastosowanie 2. **/
         this.browser = browser;
     }
@@ -45,12 +48,12 @@ public final class DevToolsFacade {
         return json.elapsedMillis();
     }
 
-    public UrlNode.Group urls(String template, String parameters) {
+    public UrlGroup urls(String template, String parameters) {
         /** Tydzień 1, Wzorzec 2/9: Builder, zastosowanie 2.
         // Przycisk Podgląd przekazuje tu dane formularza: builder zbiera szablon
         // i parametry, a build() waliduje je i tworzy kompletny zestaw URL-i.
         */
-        return new UrlNode.Builder().template(template).parameters(parameters).build();
+        return new UrlBuilder().template(template).parameters(parameters).build();
         /** Koniec, Tydzień 1, Wzorzec 2/9: Builder, zastosowanie 2. **/
     }
 
@@ -60,8 +63,8 @@ public final class DevToolsFacade {
      **/
     public int open(UrlNode batch) {
         /** Tydzień 1, Wzorzec 5/9: Composite, zastosowanie 2.
-        ** Przycisk Otwórz URL-e przyjmuje wspólny UrlNode: Link reprezentuje jeden
-        ** adres, a Group może zawierać dowolnie zagnieżdżone grupy.
+        ** Przycisk Otwórz URL-e przyjmuje wspólny UrlNode: UrlLink reprezentuje jeden
+        ** adres, a UrlGroup może zawierać dowolnie zagnieżdżone grupy.
          */
         UrlNode addresses = batch.copy();
         /** Koniec, Tydzień 1, Wzorzec 5/9: Composite, zastosowanie 2.*/

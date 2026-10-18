@@ -49,7 +49,7 @@ Wzorce z laboratorium 1 mają stałe numery 1–9, używane także w komentarzac
 Pierwszy etap: **8. Strategy** — klasy `Validate`, `Format` i `Minify` implementują
 interfejs `Operation` w pakiecie `core.json.operations`; każdy typ ma własny plik.
 Ich obiekty są dostępne jako `VALIDATE`, `FORMAT` i `MINIFY`.
-Dotychczasowy `JsonTool.Jackson.execute()` w pakiecie `core` parsuje dane raz
+`JacksonJsonTool.execute()` w pakiecie `core.json` parsuje dane raz
 i wykonuje przekazaną strategię. Widok `JsonTabView` wybiera ją przyciskiem,
 a fasada i dekorator czasu przekazują ją dalej. Nową operację dodaje się jako
 klasę implementującą `Operation`.
@@ -103,6 +103,24 @@ model nie zależy od JavaFX. Powiadomienia są synchroniczne; widok zmienia sesj
 na wątku JavaFX, także po zakończeniu otwierania. Odrzucone operacje nie powiadamiają
 odbiorców, a ponowna rejestracja tego samego obiektu nie dubluje powiadomień.
 
-Nowy układ osobnych plików dotyczy dodawanych wzorców; pozostałe klasy
-porządkujemy stopniowo przy kolejnych zmianach.
+## Laboratorium 3
+
+**Punkt 11 — organizacja obiektowa i jeden typ w pliku.** Każdy plik Java w
+`src/main/java` oraz `src/test/java` zawiera dokładnie jeden nazwany typ
+(klasę, interfejs lub rekord). Nie ma klas zagnieżdżonych ani anonimowych.
+
+- `JsonTool` zawiera sam kontrakt, a `JacksonJsonTool` i `TimedJsonTool`
+  w pakiecie `core.json` odpowiadają za przetwarzanie JSON-a i pomiar czasu.
+- `Processes` zawiera sam kontrakt. `SystemProcesses` w `infrastructure`
+  obsługuje system operacyjny, a `GuardedProcesses` w `core.processes`
+  kontroluje żądania zatrzymania procesu.
+- `UrlNode` zawiera sam kontrakt drzewa. `UrlLink`, `UrlGroup` i `UrlBuilder`
+  mają osobne pliki w `core.urls`. Osobny obiekt `UrlNodeFactory` wybiera
+  rodzaj węzła; builder wywołuje jego metodę zamiast statycznej metody interfejsu.
+- `RecordingProcesses` zastępuje anonimową implementację w teście proxy.
+
+Fasada, widoki, sesja URL-i, polecenia, obserwatorzy i testy korzystają z nowego
+układu. Zachowano dotychczasowe operacje oraz wzorce z laboratoriów 1 i 2.
+Rekordy pozostają obiektami danych; lambdy obsługują zdarzenia i interfejsy
+funkcyjne. Statyczna metoda `Launcher.main()` jest punktem wejścia aplikacji.
 

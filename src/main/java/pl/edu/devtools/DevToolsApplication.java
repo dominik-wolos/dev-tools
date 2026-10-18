@@ -8,9 +8,10 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 import pl.edu.devtools.core.DevToolsFacade;
-import pl.edu.devtools.core.JsonTool;
-import pl.edu.devtools.core.Processes;
+import pl.edu.devtools.core.json.JacksonJsonTool;
+import pl.edu.devtools.core.processes.GuardedProcesses;
 import pl.edu.devtools.infrastructure.DesktopBrowser;
+import pl.edu.devtools.infrastructure.SystemProcesses;
 import pl.edu.devtools.ui.ReportExportView;
 import pl.edu.devtools.ui.tabs.JsonTabView;
 import pl.edu.devtools.ui.tabs.ProcessesTabView;
@@ -22,12 +23,12 @@ import java.util.function.Supplier;
 public class DevToolsApplication extends Application {
     private final DevToolsFacade tools = new DevToolsFacade(
             /** Tydzień 1, Wzorzec 8/9: Proxy, zastosowanie 2.
-            * Fasada dostaje Guarded zamiast bezpośredniego dostępu do SystemProcesses;
+            * Fasada dostaje GuardedProcesses zamiast bezpośredniego dostępu do SystemProcesses;
             * każde żądanie Zatrzymaj trafia więc najpierw do kontroli chronionych PID-ów.
              */
-            new Processes.Guarded(new Processes.SystemProcesses(), ProcessHandle.current().pid()),
+            new GuardedProcesses(new SystemProcesses(), ProcessHandle.current().pid()),
             /** Koniec, Tydzień 1, Wzorzec 8/9: Proxy, zastosowanie 2.*/
-            new JsonTool.Jackson(), new DesktopBrowser());
+            new JacksonJsonTool(), new DesktopBrowser());
 
     @Override
     public void start(Stage stage) {

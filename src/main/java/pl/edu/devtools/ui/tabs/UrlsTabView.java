@@ -6,6 +6,7 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import pl.edu.devtools.core.DevToolsFacade;
 import pl.edu.devtools.core.UrlNode;
+import pl.edu.devtools.core.urls.UrlGroup;
 import pl.edu.devtools.core.urls.UrlSession;
 import pl.edu.devtools.core.urls.commands.Command;
 import pl.edu.devtools.core.urls.commands.RemoveUrlCommand;
@@ -89,7 +90,7 @@ public final class UrlsTabView {
     private void removeSelected() {
         TreeItem<UrlNode> selected = preview.getSelectionModel().getSelectedItem();
         if (selected != null && selected.getParent() != null
-                && selected.getParent().getValue() instanceof UrlNode.Group parent) {
+                && selected.getParent().getValue() instanceof UrlGroup parent) {
             execute(new RemoveUrlCommand(session, parent, selected.getValue()));
         }
     }
@@ -124,7 +125,7 @@ public final class UrlsTabView {
     }
 
     public List<String> reportLines() {
-        UrlNode.Group batch = session.batch();
+        UrlGroup batch = session.batch();
         /**
          * Tydzień 2, Wzorzec 3: Iterator, zastosowanie 3.
          * Wyeksportowanie podglądu wykorzystuje wywołanie iteratora przez spliterator().
