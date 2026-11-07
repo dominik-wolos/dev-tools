@@ -11,13 +11,14 @@ import java.nio.file.Path;
  * Tydzień 1, Wzorzec 9/9: Bridge, zastosowanie 2.
  * Implementacja miejsca zapisu; nie zna formatu TXT/JSON ani kontrolek aplikacji.
  */
-public final class FileReportOutput implements ReportOutput {
+public class FileReportOutput implements ReportOutput {
     private final Path path;
 
     public FileReportOutput(Path path) {
         this.path = path;
     }
 
+    /** Zapisuje tekst w UTF-8, zastępując zawartość pliku; błędy zapisu przekazuje jako IOException. */
     @Override
     public void write(String text) throws IOException {
         Files.writeString(path, text, StandardCharsets.UTF_8);

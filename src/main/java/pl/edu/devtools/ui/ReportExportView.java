@@ -16,6 +16,7 @@ import pl.edu.devtools.core.report.ReportOutput;
 import pl.edu.devtools.core.report.TextReport;
 import pl.edu.devtools.infrastructure.ClipboardReportOutput;
 import pl.edu.devtools.infrastructure.FileReportOutput;
+import pl.edu.devtools.infrastructure.LoggingFileReportOutput;
 
 import java.util.List;
 import java.util.function.Supplier;
@@ -67,11 +68,14 @@ public final class ReportExportView {
                     asJson() ? "JSON" : "Tekst", asJson() ? "*.json" : "*.txt"));
             var file = chooser.showSaveDialog(owner);
             if (file != null) {
+                /** Tydzień 3, Stosowanie zasad SOLID, punkt 1: Liskov, zastosowanie 3 — raport otrzymuje typ bazowy. */
+                FileReportOutput output = new LoggingFileReportOutput(file.toPath());
+                /** Koniec, Tydzień 3, punkt 1: Liskov, zastosowanie 3. */
                 /** Tydzień 1, Wzorzec 9/9: Bridge, zastosowanie 6.
                 * Przycisk Zapisz wynik łączy wybrany format raportu z plikiem
                 * wskazanym w oknie zapisu; nie potrzebuje osobnych eksporterów dla TXT i JSON.
                  */
-                tools.export(data, report(new FileReportOutput(file.toPath())));
+                tools.export(data, report(output));
                 /** Koniec, Tydzień 1, Wzorzec 9/9: Bridge, zastosowanie 6.*/
                 status.setText("Zapisano: " + file.getName());
             }

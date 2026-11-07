@@ -11,7 +11,9 @@ import java.util.regex.Pattern;
  */
 public final class UrlBuilder {
     private static final Pattern PLACEHOLDER = Pattern.compile("\\{([A-Za-z][A-Za-z0-9_]*)}");
-    private final UrlNodeFactory factory = new UrlNodeFactory();
+    /** Tydzień 3, Stosowanie zasad SOLID, punkt 1: Liskov, zastosowanie 2 — builder używa typu bazowego fabryki. */
+    private final UrlNodeFactory factory = new LoggingUrlNodeFactory();
+    /** Koniec, Tydzień 3, punkt 1: Liskov, zastosowanie 2. */
     private String template = "";
     private String parameters = "";
 

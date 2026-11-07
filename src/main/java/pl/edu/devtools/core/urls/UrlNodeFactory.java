@@ -9,7 +9,11 @@ import java.util.List;
  * Tydzień 1, Wzorzec 1/9: Simple Factory, zastosowanie 1.
  * Na podstawie liczby adresów wybiera konkretny produkt: UrlLink albo UrlGroup.
  */
-public final class UrlNodeFactory {
+public class UrlNodeFactory {
+    /**
+     * Zachowuje kolejność i duplikaty; tworzy UrlLink dla jednego adresu, a UrlGroup dla kilku.
+     * @throws IllegalArgumentException gdy lista adresów jest pusta
+     */
     public UrlNode create(String label, List<URI> addresses) {
         if (addresses.isEmpty()) {
             throw new IllegalArgumentException("Lista adresów jest pusta.");

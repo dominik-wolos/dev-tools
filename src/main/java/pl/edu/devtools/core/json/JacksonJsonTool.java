@@ -8,12 +8,18 @@ import pl.edu.devtools.core.json.operations.Operation;
 
 import java.io.IOException;
 
-public final class JacksonJsonTool implements JsonTool {
+/** Przetwarza pojedynczy dokument JSON przy użyciu przekazanej operacji. */
+public class JacksonJsonTool implements JsonTool {
     private final ObjectMapper mapper = new ObjectMapper()
             .enable(DeserializationFeature.FAIL_ON_TRAILING_TOKENS)
             .enable(DeserializationFeature.USE_BIG_DECIMAL_FOR_FLOATS)
             .enable(DeserializationFeature.USE_BIG_INTEGER_FOR_INTS);
 
+    /**
+     * Zwraca wynik operacji bez zmiany danych wejściowych.
+     * @throws IllegalArgumentException gdy wejście jest puste lub null
+     * @throws IOException gdy parsowanie lub przekazana operacja zakończy się błędem
+     */
     @Override
     public String execute(String input, Operation operation) throws IOException {
         if (input == null || input.isBlank()) {

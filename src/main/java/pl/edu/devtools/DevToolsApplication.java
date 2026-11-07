@@ -9,6 +9,7 @@ import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 import pl.edu.devtools.core.DevToolsFacade;
 import pl.edu.devtools.core.json.JacksonJsonTool;
+import pl.edu.devtools.core.json.LoggingJacksonJsonTool;
 import pl.edu.devtools.core.processes.GuardedProcesses;
 import pl.edu.devtools.infrastructure.DesktopBrowser;
 import pl.edu.devtools.infrastructure.SystemProcesses;
@@ -21,6 +22,10 @@ import java.util.List;
 import java.util.function.Supplier;
 
 public class DevToolsApplication extends Application {
+    /** Tydzień 3, Stosowanie zasad SOLID, punkt 1: Liskov, zastosowanie 1 — obiekt pochodny jako typ bazowy. */
+    private final JacksonJsonTool json = new LoggingJacksonJsonTool();
+    /** Koniec, Tydzień 3, punkt 1: Liskov, zastosowanie 1. */
+
     private final DevToolsFacade tools = new DevToolsFacade(
             /** Tydzień 1, Wzorzec 8/9: Proxy, zastosowanie 2.
             * Fasada dostaje GuardedProcesses zamiast bezpośredniego dostępu do SystemProcesses;
@@ -28,7 +33,7 @@ public class DevToolsApplication extends Application {
              */
             new GuardedProcesses(new SystemProcesses(), ProcessHandle.current().pid()),
             /** Koniec, Tydzień 1, Wzorzec 8/9: Proxy, zastosowanie 2.*/
-            new JacksonJsonTool(), new DesktopBrowser());
+            json, new DesktopBrowser());
 
     @Override
     public void start(Stage stage) {

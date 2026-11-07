@@ -105,6 +105,30 @@ odbiorców, a ponowna rejestracja tego samego obiektu nie dubluje powiadomień.
 
 ## Laboratorium 3
 
+Plan siedmiu etapów za 24 punkty: [docs/PLAN_LAB3.md](docs/PLAN_LAB3.md).
+Zmiany wprowadzamy po jednym zadaniu, z przeglądem po każdym etapie.
+
+**Punkt 1 — zasada podstawienia Liskov.** Trzy konkretne klasy bazowe mają
+klasy pochodne, które dodają komunikaty diagnostyczne na poziomie `FINE`:
+
+| Klasa bazowa | Klasa pochodna | Miejsce użycia typu bazowego |
+| --- | --- | --- |
+| `JacksonJsonTool` | `LoggingJacksonJsonTool` | pole `json` w `DevToolsApplication` |
+| `UrlNodeFactory` | `LoggingUrlNodeFactory` | pole `factory` w `UrlBuilder` |
+| `FileReportOutput` | `LoggingFileReportOutput` | zmienna `output` w `ReportExportView.save()` |
+
+Każda klasa pochodna wywołuje metodę bazową przez `super` i dodaje diagnostykę
+po jej powodzeniu. Nie zawęża akceptowanych danych, nie zmienia wyniku i nie
+przechwytuje wyjątków. Można wstawić obiekt klasy bazowej albo pochodnej bez
+zmiany wywołującego kodu. Diagnostyka nie zapisuje treści JSON-a, URL-i ani raportów;
+domyślna konfiguracja `java.util.logging` nie wyświetla poziomu `FINE`.
+
+Testy `JacksonJsonToolSubstitutionTest`, `UrlNodeFactorySubstitutionTest` oraz
+`FileReportOutputSubstitutionTest` uruchamiają wspólne scenariusze dla obu typów
+obiektów przez zmienne typu bazowego. Sprawdzają wyniki operacji JSON-a i błędy,
+rodzaj i zawartość węzłów URL oraz zapis UTF-8, nadpisywanie, pusty tekst i błędy I/O.
+Klasy i miejsca ich użycia oznaczono komentarzami tygodnia 3, punktu 1.
+
 **Punkt 11 — organizacja obiektowa i jeden typ w pliku.** Każdy plik Java w
 `src/main/java` oraz `src/test/java` zawiera dokładnie jeden nazwany typ
 (klasę, interfejs lub rekord). Nie ma klas zagnieżdżonych ani anonimowych.
