@@ -6,14 +6,14 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 /**
- * Tydzień 1, Wzorzec 2/9: Builder, zastosowanie 1.
+ * Lab 1, zadanie 2: Builder, zastosowanie 1.
  * Składa zestaw z szablonu i parametrów; build() sprawdza placeholder i adresy.
  */
 public final class UrlBuilder {
     private static final Pattern PLACEHOLDER = Pattern.compile("\\{([A-Za-z][A-Za-z0-9_]*)}");
-    /** Tydzień 3, Stosowanie zasad SOLID, punkt 1: Liskov, zastosowanie 2 — builder używa typu bazowego fabryki. */
+    /** Lab 3, zadanie 1: Liskov, zastosowanie 2 — builder używa typu bazowego fabryki. */
     private final UrlNodeFactory factory = new LoggingUrlNodeFactory();
-    /** Koniec, Tydzień 3, punkt 1: Liskov, zastosowanie 2. */
+    /** Koniec, Lab 3, zadanie 1: Liskov, zastosowanie 2. */
     private String template = "";
     private String parameters = "";
 
@@ -27,6 +27,8 @@ public final class UrlBuilder {
         return this;
     }
 
+    /** Lab 3, zadanie 5: Metody do 20 linii, zastosowanie 1 — przebieg podzielony na krótkie kroki. */
+    /** Lab 3, zadanie 7: Jeden poziom abstrakcji, zastosowanie 1 — szczegóły budowania znajdują się poniżej. */
     public UrlGroup build() {
         String placeholder = placeholder();
         String normalized = template.contains("://") ? template : "http://" + template;
@@ -37,7 +39,7 @@ public final class UrlBuilder {
         return result;
     }
 
-    /** Tydzień 3, punkty 5–7 — osobne kroki walidacji szablonu i budowania drzewa. */
+    /** Lab 3, zadanie 6: Jedna rola funkcji, zastosowanie 1 — walidacja i wyznaczenie parametru szablonu. */
     private String placeholder() {
         var matcher = PLACEHOLDER.matcher(template);
         if (!matcher.find()) {
@@ -93,12 +95,12 @@ public final class UrlBuilder {
     }
 
     private void addGroup(UrlGroup result, List<URI> addresses, int lineNumber) {
-        /** Tydzień 1, Wzorzec 1/9: Simple Factory, zastosowanie 2.
+        /** Lab 1, zadanie 1: Simple Factory, zastosowanie 2.
         Podgląd URL-i: fabryka wybiera UrlLink dla jednego adresu w wierszu
          albo UrlGroup dla kilku; builder dodaje gotowy węzeł do zestawu.
          */
         result.add(factory.create("Wiersz " + lineNumber, addresses));
-        /** Koniec, Tydzień 1, Wzorzec 1/9: Simple Factory, zastosowanie 2.*/
+        /** Koniec, Lab 1, zadanie 1: Simple Factory, zastosowanie 2. */
     }
 }
-/** Koniec, Tydzień 1, Wzorzec 2/9: Builder, zastosowanie 1. */
+/** Koniec, Lab 1, zadanie 2: Builder, zastosowanie 1. */

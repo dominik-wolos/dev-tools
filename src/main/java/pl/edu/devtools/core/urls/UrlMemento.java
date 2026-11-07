@@ -1,7 +1,7 @@
 package pl.edu.devtools.core.urls;
 
 /**
- * Tydzień 2, Wzorzec 5: Memento, zastosowanie 1.
+ * Lab 2, zadanie 5: Memento, zastosowanie 1.
  * Migawka ukrywa głęboką kopię podglądu i odtwarza z niej niezależne drzewo.
  */
 final class UrlMemento {
@@ -15,4 +15,4 @@ final class UrlMemento {
         return batch.copy();
     }
 }
-/** Koniec, Tydzień 2, Wzorzec 5: Memento, zastosowanie 1. */
+/** Koniec, Lab 2, zadanie 5: Memento, zastosowanie 1. */

@@ -5,11 +5,11 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
-/** Wspólna implementacja obserwowalności; klasa abstrakcyjna zastępuje trait w Javie. */
+/** Lab 3, zadanie 2: DIP, zastosowanie 3 — wspólna implementacja obserwowalności zastępuje trait w Javie. */
 public abstract class UrlSessionObservableSupport implements UrlSessionObservable {
     private final Set<UrlSessionObserver> observers = new LinkedHashSet<>();
 
-    /** Tydzień 2, Wzorzec 6: Observer, zastosowanie 2 — rejestracja i odpinanie odbiorców. */
+    /** Lab 2, zadanie 6: Observer, zastosowanie 2 — rejestracja i odpinanie odbiorców. */
     @Override
     public final void addObserver(UrlSessionObserver observer) {
         observers.add(Objects.requireNonNull(observer));
@@ -21,7 +21,7 @@ public abstract class UrlSessionObservableSupport implements UrlSessionObservabl
     }
 
     /**
-     * Tydzień 2, Wzorzec 6: Observer, zastosowanie 3.
+     * Lab 2, zadanie 6: Observer, zastosowanie 3.
      * Synchroniczne wywołanie odbiorców po zmianie; można odpiąć się podczas powiadomienia.
      */
     protected final void notifyObservers() {

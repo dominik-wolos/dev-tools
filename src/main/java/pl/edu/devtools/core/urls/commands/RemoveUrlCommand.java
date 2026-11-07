@@ -5,7 +5,7 @@ import pl.edu.devtools.core.urls.UrlGroup;
 import pl.edu.devtools.core.urls.UrlSession;
 
 /**
- * Tydzień 2, Wzorzec 1: Command, zastosowanie 3.
+ * Lab 2, zadanie 1: Command, zastosowanie 3.
  * Konkretne polecenie przechowuje odbiorcę i węzeł do usunięcia z podglądu.
  */
 public record RemoveUrlCommand(UrlSession session, UrlGroup parent, UrlNode node) implements Command {
@@ -14,4 +14,4 @@ public record RemoveUrlCommand(UrlSession session, UrlGroup parent, UrlNode node
         session.remove(parent, node);
     }
 }
-/** Koniec, Tydzień 2, Wzorzec 1: Command, zastosowanie 3. */
+/** Koniec, Lab 2, zadanie 1: Command, zastosowanie 3. */

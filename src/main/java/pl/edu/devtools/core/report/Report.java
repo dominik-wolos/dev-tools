@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * Tydzień 1, Wzorzec 9/9: Bridge, zastosowanie 1.
+ * Lab 1, zadanie 9: Bridge, zastosowanie 1.
  * Formaty TextReport/JsonReport są niezależne od miejsca zapisu ReportOutput: pliku albo schowka.
  * Konkretne implementacje ReportOutput znajdują się w osobnych plikach pakietu infrastructure.
  */
@@ -17,7 +17,7 @@ public abstract class Report implements ReportExporter {
     }
 
     /**
-     * Tydzień 2, Wzorzec 9: Template Method, zastosowanie 1.
+     * Lab 2, zadanie 9: Template Method, zastosowanie 1.
      * Stały przebieg: walidacja, renderowanie przez podklasę, zapis przez ReportOutput.
      */
     @Override
@@ -33,6 +33,6 @@ public abstract class Report implements ReportExporter {
     }
 
     protected abstract String render(List<String> lines) throws IOException;
-    /** Koniec, Tydzień 2, Wzorzec 9: Template Method, zastosowanie 1. */
+    /** Koniec, Lab 2, zadanie 9: Template Method, zastosowanie 1. */
 }
-/** Koniec, Tydzień 1, Wzorzec 9/9: Bridge, zastosowanie 1. */
+/** Koniec, Lab 1, zadanie 9: Bridge, zastosowanie 1. */

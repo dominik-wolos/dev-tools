@@ -127,7 +127,7 @@ Testy `JacksonJsonToolSubstitutionTest`, `UrlNodeFactorySubstitutionTest` oraz
 `FileReportOutputSubstitutionTest` uruchamiają wspólne scenariusze dla obu typów
 obiektów przez zmienne typu bazowego. Sprawdzają wyniki operacji JSON-a i błędy,
 rodzaj i zawartość węzłów URL oraz zapis UTF-8, nadpisywanie, pusty tekst i błędy I/O.
-Klasy i miejsca ich użycia oznaczono komentarzami tygodnia 3, punktu 1.
+Klasy i miejsca ich użycia oznaczono komentarzami `Lab 3, zadanie 1:`.
 
 **Punkt 2 — DIP.** Trzy hierarchie interfejs → klasa abstrakcyjna → implementacja:
 `JsonTool` → `AbstractJsonTool` → `JacksonJsonTool`,
@@ -169,3 +169,16 @@ układu. Zachowano dotychczasowe operacje oraz wzorce z laboratoriów 1 i 2.
 Rekordy pozostają obiektami danych; lambdy obsługują zdarzenia i interfejsy
 funkcyjne. Statyczna metoda `Launcher.main()` jest punktem wejścia aplikacji.
 
+
+## Oznaczenia w kodzie
+
+Komentarze wszystkich laboratoriów mają wspólny format:
+
+```java
+/** Lab 2, zadanie 1: Command, zastosowanie 1. */
+/** Lab 3, zadanie 1: Liskov, zastosowanie 1. */
+```
+
+Do prezentacji wyszukaj w całym projekcie np. `Lab 2, zadanie 1:`.
+Numer zadania odpowiada liście prowadzącego, a numer zastosowania wskazuje
+konkretne miejsce realizacji. Komentarz kończący zaczyna się od `Koniec, Lab`.

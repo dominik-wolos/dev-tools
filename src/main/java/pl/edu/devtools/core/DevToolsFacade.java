@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.stream.StreamSupport;
 
 /**
- * Tydzień 1, Wzorzec 7/9: Facade, zastosowanie 1.
+ * Lab 1, zadanie 7: Facade, zastosowanie 1.
  * Widoki korzystają z jednej usługi łączącej JSON, procesy, budowanie URL-i i raporty.
  */
 public final class DevToolsFacade implements ProcessListing, ProcessStopping {
@@ -26,12 +26,12 @@ public final class DevToolsFacade implements ProcessListing, ProcessStopping {
     public DevToolsFacade(Processes processes, JsonTool json, Browser browser) {
         this.processes = processes;
         /**
-         * Tydzień 1, Wzorzec 6/9: Decorator, zastosowanie 2.
+         * Lab 1, zadanie 6: Decorator, zastosowanie 2.
         ** Każda operacja JSON-a w tej fasadzie przechodzi przez
         **dekorator TimedJsonTool, który dodaje pomiar czasu do przekazanego narzędzia.
         */
         this.json = new TimedJsonTool(json);
-        /** Koniec, Tydzień 1, Wzorzec 6/9: Decorator, zastosowanie 2. **/
+        /** Koniec, Lab 1, zadanie 6: Decorator, zastosowanie 2. */
         this.browser = browser;
     }
 
@@ -54,31 +54,31 @@ public final class DevToolsFacade implements ProcessListing, ProcessStopping {
     }
 
     public UrlGroup urls(String template, String parameters) {
-        /** Tydzień 1, Wzorzec 2/9: Builder, zastosowanie 2.
+        /** Lab 1, zadanie 2: Builder, zastosowanie 2.
         // Przycisk Podgląd przekazuje tu dane formularza: builder zbiera szablon
         // i parametry, a build() waliduje je i tworzy kompletny zestaw URL-i.
         */
         return new UrlBuilder().template(template).parameters(parameters).build();
-        /** Koniec, Tydzień 1, Wzorzec 2/9: Builder, zastosowanie 2. **/
+        /** Koniec, Lab 1, zadanie 2: Builder, zastosowanie 2. */
     }
 
     /**
-     * Tydzień 1, Wzorzec 4/9: Adapter, zastosowanie 4.
+     * Lab 1, zadanie 4: Adapter, zastosowanie 4.
     **Otwieranie URL-i używa interfejsu Browser; w aplikacji DesktopBrowser
      **/
     public int open(UrlCopyable batch) {
-        /** Tydzień 1, Wzorzec 5/9: Composite, zastosowanie 2.
+        /** Lab 1, zadanie 5: Composite, zastosowanie 2.
         ** Przycisk Otwórz URL-e wymaga tylko kopiowania. Wynik ma wspólny typ UrlNode:
         ** UrlLink reprezentuje jeden adres, a UrlGroup zagnieżdżone grupy.
          */
         UrlNode addresses = batch.copy();
-        /** Koniec, Tydzień 1, Wzorzec 5/9: Composite, zastosowanie 2.*/
+        /** Koniec, Lab 1, zadanie 5: Composite, zastosowanie 2. */
         return openAddresses(addresses);
     }
 
     private int openAddresses(Iterable<URI> addresses) {
         /**
-         * Tydzień 2, Wzorzec 3: Iterator, zastosowanie 2.
+         * Lab 2, zadanie 3: Iterator, zastosowanie 2.
          * Niezależne wywołanie iteratora zlicza adresy, a kolejne przekazuje je przeglądarce.
          */
         long total = StreamSupport.stream(addresses.spliterator(), false).count();
@@ -92,18 +92,18 @@ public final class DevToolsFacade implements ProcessListing, ProcessStopping {
                         + " adresów. " + error.getMessage(), error);
             }
         }
-        /** Koniec, Tydzień 2, Wzorzec 3: Iterator, zastosowanie 2. */
+        /** Koniec, Lab 2, zadanie 3: Iterator, zastosowanie 2. */
         return opened;
     }
-    /** Koniec, Tydzień 1, Wzorzec 4/9: Adapter, zastosowanie 4. */
+    /** Koniec, Lab 1, zadanie 4: Adapter, zastosowanie 4. */
 
     public void export(List<String> lines, ReportExporter report) throws IOException {
         /**
-         * Tydzień 2, Wzorzec 9: Template Method, zastosowanie 2.
+         * Lab 2, zadanie 9: Template Method, zastosowanie 2.
          * Wspólne wywołanie metody szablonowej dla raportu TXT lub JSON.
          */
         report.export(lines);
-        /** Koniec, Tydzień 2, Wzorzec 9: Template Method, zastosowanie 2. */
+        /** Koniec, Lab 2, zadanie 9: Template Method, zastosowanie 2. */
     }
 }
-/**Koniec, Tydzień 1, Wzorzec 7/9: Facade, zastosowanie 1.*/
+/** Koniec, Lab 1, zadanie 7: Facade, zastosowanie 1. */

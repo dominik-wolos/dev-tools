@@ -5,7 +5,7 @@ import pl.edu.devtools.core.json.operations.Operation;
 
 import java.io.IOException;
 
-/** Tydzień 3, punkt 2: DIP — wspólna walidacja, szczegóły przetwarzania dostarcza podklasa. */
+/** Lab 3, zadanie 2: DIP, zastosowanie 1 — wspólna walidacja, szczegóły przetwarzania dostarcza podklasa. */
 public abstract class AbstractJsonTool implements JsonTool {
     @Override
     public String execute(String input, Operation operation) throws IOException {

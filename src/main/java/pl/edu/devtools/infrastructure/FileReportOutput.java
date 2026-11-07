@@ -8,7 +8,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 /**
- * Tydzień 1, Wzorzec 9/9: Bridge, zastosowanie 2.
+ * Lab 1, zadanie 9: Bridge, zastosowanie 2.
  * Implementacja miejsca zapisu; nie zna formatu TXT/JSON ani kontrolek aplikacji.
  */
 public class FileReportOutput implements ReportOutput {
@@ -24,4 +24,4 @@ public class FileReportOutput implements ReportOutput {
         Files.writeString(path, text, StandardCharsets.UTF_8);
     }
 }
-/** Koniec, Tydzień 1, Wzorzec 9/9: Bridge, zastosowanie 2.*/
+/** Koniec, Lab 1, zadanie 9: Bridge, zastosowanie 2. */

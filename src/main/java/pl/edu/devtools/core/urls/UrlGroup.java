@@ -8,7 +8,7 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * Tydzień 1, Wzorzec 5/9: Composite, zastosowanie 1.
+ * Lab 1, zadanie 5: Composite, zastosowanie 1.
  * Pojedynczy URL i zagnieżdżona grupa mają wspólny interfejs UrlNode.
  */
 public final class UrlGroup implements UrlNode {
@@ -50,7 +50,7 @@ public final class UrlGroup implements UrlNode {
     }
 
     /**
-     * Tydzień 1, Wzorzec 3/9: Prototype, zastosowanie 1.
+     * Lab 1, zadanie 3: Prototype, zastosowanie 1.
      * Kopia ma osobną listę i rekurencyjnie kopiuje dzieci, aby edycja podglądu
      * nie zmieniała prototypu używanego przez przycisk przywracania.
      */
@@ -60,11 +60,11 @@ public final class UrlGroup implements UrlNode {
         children.forEach(child -> result.add(child.copy()));
         return result;
     }
-    /** Koniec, Tydzień 1, Wzorzec 3/9: Prototype, zastosowanie 1.*/
+    /** Koniec, Lab 1, zadanie 3: Prototype, zastosowanie 1. */
 
     @Override
     public String toString() {
         return label + " (" + urls().size() + ")";
     }
 }
-/** Koniec, Tydzień 1, Wzorzec 5/9: Composite, zastosowanie 1. */
+/** Koniec, Lab 1, zadanie 5: Composite, zastosowanie 1. */

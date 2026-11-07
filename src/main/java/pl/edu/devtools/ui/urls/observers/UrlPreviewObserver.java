@@ -9,7 +9,7 @@ import pl.edu.devtools.core.urls.UrlGroup;
 import pl.edu.devtools.core.urls.observers.UrlSessionState;
 import pl.edu.devtools.core.urls.observers.UrlSessionObserver;
 
-/** Tydzień 2, Wzorzec 6: Observer, zastosowanie 4 — odbiorca odświeża drzewo i licznik. */
+/** Lab 2, zadanie 6: Observer, zastosowanie 4 — odbiorca odświeża drzewo i licznik. */
 public record UrlPreviewObserver(TreeView<UrlNode> preview, Label status) implements UrlSessionObserver {
     @Override
     public void sessionChanged(UrlSessionState session) {

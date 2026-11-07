@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
- * Tydzień 2, Wzorzec 8: Strategy, zastosowanie 3.
+ * Lab 2, zadanie 8: Strategy, zastosowanie 3.
  * Konkretna strategia potwierdza poprawność danych sprawdzonych przez parser.
  */
 public final class Validate implements Operation {
@@ -13,4 +13,4 @@ public final class Validate implements Operation {
         return "JSON jest poprawny.";
     }
 }
-/** Koniec, Tydzień 2, Wzorzec 8: Strategy, zastosowanie 3. */
+/** Koniec, Lab 2, zadanie 8: Strategy, zastosowanie 3. */

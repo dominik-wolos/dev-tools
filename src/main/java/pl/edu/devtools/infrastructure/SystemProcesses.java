@@ -10,7 +10,7 @@ import java.util.Comparator;
 import java.util.List;
 
 /**
- * Tydzień 1, Wzorzec 4/9: Adapter, zastosowanie 1.
+ * Lab 1, zadanie 4: Adapter, zastosowanie 1.
  * Tłumaczy API ProcessHandle na listę danych aplikacji i operację stop(pid).
  */
 public final class SystemProcesses implements Processes {
@@ -39,4 +39,4 @@ public final class SystemProcesses implements Processes {
                 .map(ProcessHandle::destroy).orElse(false);
     }
 }
-/** Koniec, Tydzień 1, Wzorzec 4/9: Adapter, zastosowanie 1. */
+/** Koniec, Lab 1, zadanie 4: Adapter, zastosowanie 1. */

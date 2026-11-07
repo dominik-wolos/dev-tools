@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * Tydzień 2, Wzorzec 9: Template Method, zastosowanie 4.
+ * Lab 2, zadanie 9: Template Method, zastosowanie 4.
  * Podklasa dostarcza krok renderowania JSON przy użyciu wstrzykniętego mappera.
  */
 public final class JsonReport extends Report {
@@ -23,4 +23,4 @@ public final class JsonReport extends Report {
         return mapper.writerWithDefaultPrettyPrinter().writeValueAsString(lines);
     }
 }
-/** Koniec, Tydzień 2, Wzorzec 9: Template Method, zastosowanie 4. */
+/** Koniec, Lab 2, zadanie 9: Template Method, zastosowanie 4. */

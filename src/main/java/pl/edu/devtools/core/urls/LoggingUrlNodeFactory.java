@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.logging.Logger;
 
 /**
- * Tydzień 3, Stosowanie zasad SOLID, punkt 1: Liskov, zastosowanie 2.
+ * Lab 3, zadanie 1: Liskov, zastosowanie 2.
  * Dodaje diagnostykę do UrlNodeFactory bez zmiany rodzaju węzła, kolejności i duplikatów.
  */
 public final class LoggingUrlNodeFactory extends UrlNodeFactory {
@@ -20,4 +20,4 @@ public final class LoggingUrlNodeFactory extends UrlNodeFactory {
         return node;
     }
 }
-/** Koniec, Tydzień 3, punkt 1: Liskov, zastosowanie 2. */
+/** Koniec, Lab 3, zadanie 1: Liskov, zastosowanie 2. */

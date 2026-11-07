@@ -7,7 +7,7 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * Tydzień 1, Wzorzec 5/9: Composite, zastosowanie 1.
+ * Lab 1, zadanie 5: Composite, zastosowanie 1.
  * Pojedynczy URL i zagnieżdżona grupa mają wspólny interfejs UrlNode.
  */
 public record UrlLink(URI uri) implements UrlNode {
@@ -31,4 +31,4 @@ public record UrlLink(URI uri) implements UrlNode {
         return uri.toString();
     }
 }
-/** Koniec, Tydzień 1, Wzorzec 5/9: Composite, zastosowanie 1. */
+/** Koniec, Lab 1, zadanie 5: Composite, zastosowanie 1. */

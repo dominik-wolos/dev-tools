@@ -3,7 +3,7 @@ package pl.edu.devtools.core.urls.commands;
 import pl.edu.devtools.core.urls.UrlSession;
 
 /**
- * Tydzień 2, Wzorzec 1: Command, zastosowanie 6.
+ * Lab 2, zadanie 1: Command, zastosowanie 6.
  * Polecenie zleca odbiorcy cofnięcie ostatniej zmiany podglądu.
  */
 public record UndoPreviewCommand(UrlSession session) implements Command {
@@ -12,4 +12,4 @@ public record UndoPreviewCommand(UrlSession session) implements Command {
         session.undo();
     }
 }
-/** Koniec, Tydzień 2, Wzorzec 1: Command, zastosowanie 6. */
+/** Koniec, Lab 2, zadanie 1: Command, zastosowanie 6. */

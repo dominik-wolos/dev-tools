@@ -6,7 +6,7 @@ import pl.edu.devtools.core.Processes;
 import java.util.List;
 
 /**
- * Tydzień 1, Wzorzec 8/9: Proxy, zastosowanie 1.
+ * Lab 1, zadanie 8: Proxy, zastosowanie 1.
  * Ten sam interfejs; żądanie zatrzymania jest przekazywane po kontroli PID.
  */
 public final class GuardedProcesses implements Processes {
@@ -31,4 +31,4 @@ public final class GuardedProcesses implements Processes {
         return delegate.stop(pid);
     }
 }
-/** Koniec, Tydzień 1, Wzorzec 8/9: Proxy, zastosowanie 1. */
+/** Koniec, Lab 1, zadanie 8: Proxy, zastosowanie 1. */

@@ -6,7 +6,7 @@ import pl.edu.devtools.core.json.operations.Operation;
 import java.io.IOException;
 
 /**
- * Tydzień 1, Wzorzec 6/9: Decorator, zastosowanie 1.
+ * Lab 1, zadanie 6: Decorator, zastosowanie 1.
  * Opakowanie zachowuje interfejs narzędzia i mierzy czas także przy błędzie JSON-a.
  */
 public final class TimedJsonTool implements JsonTool {
@@ -31,4 +31,4 @@ public final class TimedJsonTool implements JsonTool {
         return elapsedNanos / 1_000_000.0;
     }
 }
-/** Koniec, Tydzień 1, Wzorzec 6/9: Decorator, zastosowanie 1. */
+/** Koniec, Lab 1, zadanie 6: Decorator, zastosowanie 1. */

@@ -1,7 +1,7 @@
 package pl.edu.devtools.core.urls;
 
 /**
- * Tydzień 2, Wzorzec 5: Memento, zastosowanie 4.
+ * Lab 2, zadanie 5: Memento, zastosowanie 4.
  * Opiekun przechowuje jedną migawkę bez dostępu do jej zawartości.
  */
 final class UrlHistory {
@@ -19,4 +19,4 @@ final class UrlHistory {
         previous = null;
     }
 }
-/** Koniec, Tydzień 2, Wzorzec 5: Memento, zastosowanie 4. */
+/** Koniec, Lab 2, zadanie 5: Memento, zastosowanie 4. */

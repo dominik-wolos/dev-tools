@@ -48,12 +48,12 @@ public final class ReportExportView {
 
     private void copy(ActionEvent event) {
         try {
-            /** Tydzień 1, Wzorzec 9/9: Bridge, zastosowanie 5.
+            /** Lab 1, zadanie 9: Bridge, zastosowanie 5.
             * Przycisk Kopiuj wynik łączy format wybrany w formularzu z implementacją
             * schowka; ta sama implementacja przyjmuje raport TXT lub JSON.
              */
             tools.export(exportable(), report(new ClipboardReportOutput()));
-            /** Koniec, Tydzień 1, Wzorzec 9/9: Bridge, zastosowanie 5.*/
+            /** Koniec, Lab 1, zadanie 9: Bridge, zastosowanie 5. */
             status.setText("Skopiowano.");
         } catch (Exception error) {
             status.setText(error.getMessage());
@@ -83,15 +83,15 @@ public final class ReportExportView {
     }
 
     private void saveReport(List<String> data, File file) throws IOException {
-        /** Tydzień 3, Stosowanie zasad SOLID, punkt 1: Liskov, zastosowanie 3 — raport otrzymuje typ bazowy. */
+        /** Lab 3, zadanie 1: Liskov, zastosowanie 3 — raport otrzymuje typ bazowy. */
         FileReportOutput output = new LoggingFileReportOutput(file.toPath());
-        /** Koniec, Tydzień 3, punkt 1: Liskov, zastosowanie 3. */
-        /** Tydzień 1, Wzorzec 9/9: Bridge, zastosowanie 6.
+        /** Koniec, Lab 3, zadanie 1: Liskov, zastosowanie 3. */
+        /** Lab 1, zadanie 9: Bridge, zastosowanie 6.
         * Przycisk Zapisz wynik łączy wybrany format raportu z plikiem
         * wskazanym w oknie zapisu; nie potrzebuje osobnych eksporterów dla TXT i JSON.
          */
         tools.export(data, report(output));
-        /** Koniec, Tydzień 1, Wzorzec 9/9: Bridge, zastosowanie 6.*/
+        /** Koniec, Lab 1, zadanie 9: Bridge, zastosowanie 6. */
     }
 
     private boolean asJson() {
@@ -100,12 +100,12 @@ public final class ReportExportView {
 
     private Report report(ReportOutput destination) {
         /**
-         * Tydzień 1, Wzorzec 9/9: Bridge, zastosowanie 4.
+         * Lab 1, zadanie 9: Bridge, zastosowanie 4.
          * Łączy wybrany format TXT/JSON z przekazanym miejscem zapisu: plikiem
          * lub schowkiem. Format i miejsce zapisu można wybierać niezależnie.
          */
         return asJson() ? new JsonReport(destination, reportMapper) : new TextReport(destination);
-        /** Koniec, Tydzień 1, Wzorzec 9/9: Bridge, zastosowanie 4. */
+        /** Koniec, Lab 1, zadanie 9: Bridge, zastosowanie 4. */
     }
 
     private List<String> exportable() {

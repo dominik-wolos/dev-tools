@@ -7,7 +7,7 @@ import pl.edu.devtools.core.report.ReportOutput;
 import java.io.IOException;
 
 /**
- * Tydzień 1, Wzorzec 9/9: Bridge, zastosowanie 3.
+ * Lab 1, zadanie 9: Bridge, zastosowanie 3.
  * Implementacja miejsca zapisu: schowek JavaFX, niezależnie od formatu raportu.
  */
 public final class ClipboardReportOutput implements ReportOutput {
@@ -20,4 +20,4 @@ public final class ClipboardReportOutput implements ReportOutput {
         }
     }
 }
-/** Koniec, Tydzień 1, Wzorzec 9/9: Bridge, zastosowanie 3.*/
+/** Koniec, Lab 1, zadanie 9: Bridge, zastosowanie 3. */

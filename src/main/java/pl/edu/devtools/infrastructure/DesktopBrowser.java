@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.net.URI;
 
 /**
- * Tydzień 1, Wzorzec 4/9: Adapter, zastosowanie 2.
+ * Lab 1, zadanie 4: Adapter, zastosowanie 2.
  * Udostępnia systemową przeglądarkę przez interfejs Browser używany przez logikę aplikacji.
  */
 public final class DesktopBrowser implements Browser {
@@ -19,4 +19,4 @@ public final class DesktopBrowser implements Browser {
         Desktop.getDesktop().browse(uri);
     }
 }
-/** Koniec, Tydzień 1, Wzorzec 4/9: Adapter, zastosowanie 2.*/
+/** Koniec, Lab 1, zadanie 4: Adapter, zastosowanie 2. */

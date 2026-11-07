@@ -3,7 +3,7 @@ package pl.edu.devtools.core;
 import pl.edu.devtools.core.processes.ProcessIdentity;
 import pl.edu.devtools.core.processes.ProcessDetails;
 
-/** Tydzień 3, punkt 8 — dwa spójne obiekty danych zamiast sześciu argumentów konstruktora. */
+/** Lab 3, zadanie 8: Maksymalnie 3 argumenty, zastosowanie 1 — dwa spójne obiekty danych zamiast sześciu argumentów konstruktora. */
 public record ProcessRow(ProcessIdentity identity, ProcessDetails details) {
     public long pid() {
         return identity.pid();

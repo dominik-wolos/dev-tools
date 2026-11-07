@@ -6,7 +6,7 @@ import java.net.URI;
 import java.util.List;
 
 /**
- * Tydzień 1, Wzorzec 1/9: Simple Factory, zastosowanie 1.
+ * Lab 1, zadanie 1: Simple Factory, zastosowanie 1.
  * Na podstawie liczby adresów wybiera konkretny produkt: UrlLink albo UrlGroup.
  */
 public class UrlNodeFactory {
@@ -26,4 +26,4 @@ public class UrlNodeFactory {
         return group;
     }
 }
-/** Koniec, Tydzień 1, Wzorzec 1/9: Simple Factory, zastosowanie 1. */
+/** Koniec, Lab 1, zadanie 1: Simple Factory, zastosowanie 1. */

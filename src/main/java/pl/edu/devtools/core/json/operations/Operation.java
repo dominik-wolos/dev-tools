@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 
 /**
- * Tydzień 2, Wzorzec 8: Strategy, zastosowanie 1.
+ * Lab 2, zadanie 8: Strategy, zastosowanie 1.
  * Wspólny interfejs wymiennych strategii walidacji, formatowania i minifikacji.
  */
 public interface Operation {
@@ -16,4 +16,4 @@ public interface Operation {
 
     String apply(JsonNode value, ObjectMapper mapper) throws IOException;
 }
-/** Koniec, Tydzień 2, Wzorzec 8: Strategy, zastosowanie 1. */
+/** Koniec, Lab 2, zadanie 8: Strategy, zastosowanie 1. */

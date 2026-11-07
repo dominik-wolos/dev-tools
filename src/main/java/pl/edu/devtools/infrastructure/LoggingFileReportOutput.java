@@ -5,7 +5,7 @@ import java.nio.file.Path;
 import java.util.logging.Logger;
 
 /**
- * Tydzień 3, Stosowanie zasad SOLID, punkt 1: Liskov, zastosowanie 3.
+ * Lab 3, zadanie 1: Liskov, zastosowanie 3.
  * Dodaje diagnostykę do FileReportOutput bez zmiany treści, kodowania i obsługi błędów zapisu.
  */
 public final class LoggingFileReportOutput extends FileReportOutput {
@@ -21,4 +21,4 @@ public final class LoggingFileReportOutput extends FileReportOutput {
         LOGGER.fine(() -> "Zapisano raport, znaków: " + text.length());
     }
 }
-/** Koniec, Tydzień 3, punkt 1: Liskov, zastosowanie 3. */
+/** Koniec, Lab 3, zadanie 1: Liskov, zastosowanie 3. */

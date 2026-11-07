@@ -59,12 +59,12 @@ public final class JsonTabView {
     private void run(Operation operation) {
         valid = false;
         try {
-            /** Tydzień 1, Wzorzec 7/9: Facade, zastosowanie 2.
+            /** Lab 1, zadanie 7: Facade, zastosowanie 2.
             * Przyciski operacji JSON-a korzystają z jednej metody fasady;
             * widok nie konfiguruje Jacksona ani dekoratora pomiaru czasu.
             */
             output.setText(tools.json(input.getText(), operation));
-            /** Koniec, Tydzień 1, Wzorzec 7/9: Facade, zastosowanie 2.*/
+            /** Koniec, Lab 1, zadanie 7: Facade, zastosowanie 2. */
             valid = true;
             status.setText(String.format("Poprawny JSON · %.2f ms", tools.jsonMillis()));
         } catch (JsonProcessingException error) {

@@ -1,7 +1,7 @@
 package pl.edu.devtools.core.urls.states;
 
 /**
- * Tydzień 2, Wzorzec 7: State, zastosowanie 1.
+ * Lab 2, zadanie 7: State, zastosowanie 1.
  * Kontrakt dostępności edycji i przejść cyklu otwierania URL-i.
  */
 public interface UrlState {

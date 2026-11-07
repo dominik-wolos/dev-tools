@@ -9,7 +9,7 @@ import pl.edu.devtools.core.urls.states.UrlState;
 import java.util.Objects;
 
 /**
- * Tydzień 2, Wzorzec 1: Command, zastosowanie 2.
+ * Lab 2, zadanie 1: Command, zastosowanie 2.
  * Odbiorca poleceń przechowuje podgląd i wykonuje operacje na jego danych.
  */
 public final class UrlSession extends UrlSessionObservableSupport {
@@ -27,14 +27,14 @@ public final class UrlSession extends UrlSessionObservableSupport {
         state.requireEditable();
         Objects.requireNonNull(original);
         /**
-         * Tydzień 1, Wzorzec 3/9: Prototype, zastosowanie 3.
+         * Lab 1, zadanie 3: Prototype, zastosowanie 3.
          * Zapamiętuje głęboką kopię wygenerowanego podglądu. Usuwanie adresów
          * z batch nie zmieni tej kopii używanej przez Przywróć podgląd.
          * Kopia robocza batch powstaje z zapisanego prototypu.
          */
         prototype = original.copy();
         batch = prototype.copy();
-        /** Koniec, Tydzień 1, Wzorzec 3/9: Prototype, zastosowanie 3. */
+        /** Koniec, Lab 1, zadanie 3: Prototype, zastosowanie 3. */
         history.clear();
         state = new ReadyState();
         notifyObservers();
@@ -67,25 +67,25 @@ public final class UrlSession extends UrlSessionObservableSupport {
         state.requireEditable();
         if (prototype != null) {
             /**
-             * Tydzień 1, Wzorzec 3/9: Prototype, zastosowanie 2.
+             * Lab 1, zadanie 3: Prototype, zastosowanie 2.
              * Odtworzenie niezależnego drzewa z prototypu zapisanego po generowaniu.
              */
             UrlGroup restored = prototype.copy();
             remember();
             batch = restored;
-            /** Koniec, Tydzień 1, Wzorzec 3/9: Prototype, zastosowanie 2. */
+            /** Koniec, Lab 1, zadanie 3: Prototype, zastosowanie 2. */
             notifyObservers();
         }
     }
 
     /**
-     * Tydzień 2, Wzorzec 5: Memento, zastosowanie 2.
+     * Lab 2, zadanie 5: Memento, zastosowanie 2.
      * Originator zapisuje stan kopii roboczej przed jej zmianą.
      */
     private void remember() {
         history.save(new UrlMemento(batch));
     }
-    /** Koniec, Tydzień 2, Wzorzec 5: Memento, zastosowanie 2. */
+    /** Koniec, Lab 2, zadanie 5: Memento, zastosowanie 2. */
 
     @Override
     public boolean canUndo() {
@@ -93,7 +93,7 @@ public final class UrlSession extends UrlSessionObservableSupport {
     }
 
     /**
-     * Tydzień 2, Wzorzec 5: Memento, zastosowanie 3.
+     * Lab 2, zadanie 5: Memento, zastosowanie 3.
      * Jednokrotne wywołanie odtworzenia migawki przywraca ostatni stan batch.
      */
     public void undo() {
@@ -105,10 +105,10 @@ public final class UrlSession extends UrlSessionObservableSupport {
             notifyObservers();
         }
     }
-    /** Koniec, Tydzień 2, Wzorzec 5: Memento, zastosowanie 3. */
+    /** Koniec, Lab 2, zadanie 5: Memento, zastosowanie 3. */
 
     /**
-     * Tydzień 2, Wzorzec 7: State, zastosowanie 2.
+     * Lab 2, zadanie 7: State, zastosowanie 2.
      * Kontekst deleguje wywołanie przejść i dostępność edycji do bieżącego stanu.
      */
     @Override
@@ -134,6 +134,6 @@ public final class UrlSession extends UrlSessionObservableSupport {
             notifyObservers();
         }
     }
-    /** Koniec, Tydzień 2, Wzorzec 7: State, zastosowanie 2. */
+    /** Koniec, Lab 2, zadanie 7: State, zastosowanie 2. */
 }
-/** Koniec, Tydzień 2, Wzorzec 1: Command, zastosowanie 2. */
+/** Koniec, Lab 2, zadanie 1: Command, zastosowanie 2. */

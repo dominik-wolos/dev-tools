@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 
 /**
- * Tydzień 2, Wzorzec 8: Strategy, zastosowanie 5.
+ * Lab 2, zadanie 8: Strategy, zastosowanie 5.
  * Konkretna strategia zapisuje JSON bez zbędnych odstępów i wcięć.
  */
 public final class Minify implements Operation {
@@ -15,4 +15,4 @@ public final class Minify implements Operation {
         return mapper.writeValueAsString(value);
     }
 }
-/** Koniec, Tydzień 2, Wzorzec 8: Strategy, zastosowanie 5. */
+/** Koniec, Lab 2, zadanie 8: Strategy, zastosowanie 5. */

@@ -93,7 +93,7 @@ public final class ProcessesTabView {
     private void refresh() {
         refresh.setDisable(true);
         status.setText("Wczytywanie…");
-        /** Tydzień 1, Wzorzec 7/9: Facade, zastosowanie 4.
+        /** Lab 1, zadanie 7: Facade, zastosowanie 4.
         *Przycisk Odśwież pobiera procesy przez fasadę w tle, a potem aktualizuje
         * tabelę. Widok nie odwołuje się bezpośrednio do systemowego ProcessHandle.*/
         CompletableFuture.supplyAsync(processes::list).whenComplete((result, error) -> Platform.runLater(() -> {
@@ -105,7 +105,7 @@ public final class ProcessesTabView {
                 status.setText("Nie udało się wczytać procesów: " + error.getCause().getMessage());
             }
         }));
-        /** Koniec, Tydzień 1, Wzorzec 7/9: Facade, zastosowanie 4. */
+        /** Koniec, Lab 1, zadanie 7: Facade, zastosowanie 4. */
     }
 
     private void stopSelected() {

@@ -22,17 +22,17 @@ import java.util.List;
 import java.util.function.Supplier;
 
 public class DevToolsApplication extends Application {
-    /** Tydzień 3, Stosowanie zasad SOLID, punkt 1: Liskov, zastosowanie 1 — obiekt pochodny jako typ bazowy. */
+    /** Lab 3, zadanie 1: Liskov, zastosowanie 1 — obiekt pochodny jako typ bazowy. */
     private final JacksonJsonTool json = new LoggingJacksonJsonTool();
-    /** Koniec, Tydzień 3, punkt 1: Liskov, zastosowanie 1. */
+    /** Koniec, Lab 3, zadanie 1: Liskov, zastosowanie 1. */
 
     private final DevToolsFacade tools = new DevToolsFacade(
-            /** Tydzień 1, Wzorzec 8/9: Proxy, zastosowanie 2.
+            /** Lab 1, zadanie 8: Proxy, zastosowanie 2.
             * Fasada dostaje GuardedProcesses zamiast bezpośredniego dostępu do SystemProcesses;
             * każde żądanie Zatrzymaj trafia więc najpierw do kontroli chronionych PID-ów.
              */
             new GuardedProcesses(new SystemProcesses(), ProcessHandle.current().pid()),
-            /** Koniec, Tydzień 1, Wzorzec 8/9: Proxy, zastosowanie 2.*/
+            /** Koniec, Lab 1, zadanie 8: Proxy, zastosowanie 2. */
             json, new DesktopBrowser());
 
     @Override

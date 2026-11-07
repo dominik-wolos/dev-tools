@@ -38,7 +38,7 @@ public final class UrlsTabView {
     public UrlsTabView(DevToolsFacade tools) {
         this.tools = tools;
         UrlSessionSubscriptions subscriptions = session;
-        /** Tydzień 2, Wzorzec 6: Observer, zastosowanie 6 — wywołanie rejestracji dwóch odbiorców. */
+        /** Lab 2, zadanie 6: Observer, zastosowanie 6 — wywołanie rejestracji dwóch odbiorców. */
         subscriptions.addObserver(new UrlPreviewObserver(preview, status));
         var actions = new UrlActionsObserver(List.of(template, parameters, generate, open, preview),
                 new UrlPreviewActions(remove, restore, undo));
@@ -70,11 +70,11 @@ public final class UrlsTabView {
         remove.setOnAction(event -> removeSelected());
         restore.setOnAction(event -> execute(new RestorePreviewCommand(session)));
         /**
-         * Tydzień 2, Wzorzec 5: Memento, zastosowanie 5.
+         * Lab 2, zadanie 5: Memento, zastosowanie 5.
          * Przycisk inicjuje wywołanie cofnięcia ostatniej zmiany kopii roboczej.
          */
         undo.setOnAction(event -> execute(new UndoPreviewCommand(session)));
-        /** Koniec, Tydzień 2, Wzorzec 5: Memento, zastosowanie 5. */
+        /** Koniec, Lab 2, zadanie 5: Memento, zastosowanie 5. */
     }
 
     private void invalidate() {
@@ -85,12 +85,12 @@ public final class UrlsTabView {
     private boolean generate() {
         try {
             /**
-             * Tydzień 1, Wzorzec 7/9: Facade, zastosowanie 3.
+             * Lab 1, zadanie 7: Facade, zastosowanie 3.
              * Przycisk Podgląd zleca fasadzie przygotowanie drzewa URL-i;
              * widok nie musi znać buildera, fabryki ani reguł walidacji adresów.
              */
             session.load(tools.urls(template.getText(), parameters.getText()));
-            /** Koniec, Tydzień 1, Wzorzec 7/9: Facade, zastosowanie 3. */
+            /** Koniec, Lab 1, zadanie 7: Facade, zastosowanie 3. */
             return true;
         } catch (IllegalArgumentException error) {
             session.clear();
@@ -108,13 +108,13 @@ public final class UrlsTabView {
     }
 
     /**
-     * Tydzień 2, Wzorzec 1: Command, zastosowanie 5.
+     * Lab 2, zadanie 1: Command, zastosowanie 5.
      * Widok inicjuje wywołanie polecenia przez wspólny interfejs; obserwatorzy odświeżają podgląd.
      */
     private void execute(Command command) {
         command.execute();
     }
-    /** Koniec, Tydzień 2, Wzorzec 1: Command, zastosowanie 5. */
+    /** Koniec, Lab 2, zadanie 1: Command, zastosowanie 5. */
 
     private void open() {
         if (session.batch() == null && !generate()) {
@@ -122,7 +122,7 @@ public final class UrlsTabView {
         }
         UrlNode snapshot;
         try {
-            /** Tydzień 2, Wzorzec 7: State, zastosowanie 3 — wywołanie rozpoczęcia otwierania. */
+            /** Lab 2, zadanie 7: State, zastosowanie 3 — wywołanie rozpoczęcia otwierania. */
             snapshot = session.beginOpening();
         } catch (IllegalStateException error) {
             status.setText(error.getMessage());
@@ -142,11 +142,11 @@ public final class UrlsTabView {
     public List<String> reportLines() {
         UrlListing batch = session.batch();
         /**
-         * Tydzień 2, Wzorzec 3: Iterator, zastosowanie 3.
+         * Lab 2, zadanie 3: Iterator, zastosowanie 3.
          * Wyeksportowanie podglądu wykorzystuje wywołanie iteratora przez spliterator().
          */
         return batch == null ? List.of()
                 : StreamSupport.stream(batch.spliterator(), false).map(Object::toString).toList();
-        /** Koniec, Tydzień 2, Wzorzec 3: Iterator, zastosowanie 3. */
+        /** Koniec, Lab 2, zadanie 3: Iterator, zastosowanie 3. */
     }
 }

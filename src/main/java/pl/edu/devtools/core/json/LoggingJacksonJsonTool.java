@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.util.logging.Logger;
 
 /**
- * Tydzień 3, Stosowanie zasad SOLID, punkt 1: Liskov, zastosowanie 1.
+ * Lab 3, zadanie 1: Liskov, zastosowanie 1.
  * Dodaje diagnostykę do JacksonJsonTool, zachowując wynik operacji i oryginalne wyjątki.
  */
 public final class LoggingJacksonJsonTool extends JacksonJsonTool {
@@ -19,4 +19,4 @@ public final class LoggingJacksonJsonTool extends JacksonJsonTool {
         return result;
     }
 }
-/** Koniec, Tydzień 3, punkt 1: Liskov, zastosowanie 1. */
+/** Koniec, Lab 3, zadanie 1: Liskov, zastosowanie 1. */

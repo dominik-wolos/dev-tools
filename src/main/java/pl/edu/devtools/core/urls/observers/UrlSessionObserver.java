@@ -1,6 +1,6 @@
 package pl.edu.devtools.core.urls.observers;
 
-/** Tydzień 2, Wzorzec 6: Observer, zastosowanie 1 — kontrakt odbiorcy zmian sesji. */
+/** Lab 2, zadanie 6: Observer, zastosowanie 1 — kontrakt odbiorcy zmian sesji. */
 public interface UrlSessionObserver {
     void sessionChanged(UrlSessionState session);
 }

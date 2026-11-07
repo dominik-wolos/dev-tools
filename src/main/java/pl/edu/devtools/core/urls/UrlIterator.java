@@ -7,7 +7,7 @@ import java.util.NoSuchElementException;
 import java.util.Objects;
 
 /**
- * Tydzień 2, Wzorzec 3: Iterator, zastosowanie 1.
+ * Lab 2, zadanie 3: Iterator, zastosowanie 1.
  * Leniwe przejście DFS korzysta z iteratorów dzieci bez spłaszczania drzewa.
  */
 public final class UrlIterator implements Iterator<URI> {
@@ -34,4 +34,4 @@ public final class UrlIterator implements Iterator<URI> {
         return current.next();
     }
 }
-/** Koniec, Tydzień 2, Wzorzec 3: Iterator, zastosowanie 1. */
+/** Koniec, Lab 2, zadanie 3: Iterator, zastosowanie 1. */

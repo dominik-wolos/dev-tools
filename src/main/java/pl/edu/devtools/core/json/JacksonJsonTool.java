@@ -26,10 +26,10 @@ public class JacksonJsonTool extends AbstractJsonTool {
             throw new IllegalArgumentException("Wpisz JSON do sprawdzenia.");
         }
         /**
-         * Tydzień 2, Wzorzec 8: Strategy, zastosowanie 2.
+         * Lab 2, zadanie 8: Strategy, zastosowanie 2.
          * Po wspólnej walidacji następuje wywołanie wybranej strategii.
          */
         return operation.apply(value, mapper);
-        /** Koniec, Tydzień 2, Wzorzec 8: Strategy, zastosowanie 2. */
+        /** Koniec, Lab 2, zadanie 8: Strategy, zastosowanie 2. */
     }
 }
