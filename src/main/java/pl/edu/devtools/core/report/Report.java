@@ -9,7 +9,7 @@ import java.util.Objects;
  * Formaty TextReport/JsonReport są niezależne od miejsca zapisu ReportOutput: pliku albo schowka.
  * Konkretne implementacje ReportOutput znajdują się w osobnych plikach pakietu infrastructure.
  */
-public abstract class Report {
+public abstract class Report implements ReportExporter {
     private final ReportOutput output;
 
     protected Report(ReportOutput output) {
@@ -20,6 +20,7 @@ public abstract class Report {
      * Tydzień 2, Wzorzec 9: Template Method, zastosowanie 1.
      * Stały przebieg: walidacja, renderowanie przez podklasę, zapis przez ReportOutput.
      */
+    @Override
     public final void export(List<String> lines) throws IOException {
         validate(lines);
         output.write(render(lines));

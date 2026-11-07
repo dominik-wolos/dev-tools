@@ -7,13 +7,16 @@ import javafx.scene.layout.VBox;
 import pl.edu.devtools.core.DevToolsFacade;
 import pl.edu.devtools.core.UrlNode;
 import pl.edu.devtools.core.urls.UrlGroup;
+import pl.edu.devtools.core.urls.UrlListing;
 import pl.edu.devtools.core.urls.UrlSession;
 import pl.edu.devtools.core.urls.commands.Command;
 import pl.edu.devtools.core.urls.commands.RemoveUrlCommand;
 import pl.edu.devtools.core.urls.commands.RestorePreviewCommand;
 import pl.edu.devtools.core.urls.commands.UndoPreviewCommand;
+import pl.edu.devtools.core.urls.observers.UrlSessionSubscriptions;
 import pl.edu.devtools.ui.urls.observers.UrlActionsObserver;
 import pl.edu.devtools.ui.urls.observers.UrlPreviewObserver;
+import pl.edu.devtools.ui.urls.observers.UrlPreviewActions;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -34,20 +37,34 @@ public final class UrlsTabView {
 
     public UrlsTabView(DevToolsFacade tools) {
         this.tools = tools;
+        UrlSessionSubscriptions subscriptions = session;
         /** Tydzień 2, Wzorzec 6: Observer, zastosowanie 6 — wywołanie rejestracji dwóch odbiorców. */
-        session.addObserver(new UrlPreviewObserver(preview, status));
+        subscriptions.addObserver(new UrlPreviewObserver(preview, status));
         var actions = new UrlActionsObserver(List.of(template, parameters, generate, open, preview),
-                remove, restore, undo);
-        session.addObserver(actions);
+                new UrlPreviewActions(remove, restore, undo));
+        subscriptions.addObserver(actions);
         actions.sessionChanged(session);
     }
 
     public Tab create() {
+        configureForm();
+        configureActions();
+        SplitPane editors = new SplitPane(parameters, preview);
+        editors.setDividerPositions(0.35);
+        VBox.setVgrow(editors, Priority.ALWAYS);
+        return new Tab("URLs", new VBox(new ToolBar(new Label("Szablon:"), template, generate, open),
+                new ToolBar(remove, restore, undo, status), editors));
+    }
+
+    private void configureForm() {
         template.setPromptText("http://localhost:8080/orders/{orderID}");
         template.setPrefColumnCount(34);
         parameters.setPromptText("Np. 1, 2; 003 | 4\n5 6\nSeparatorem może być dowolny znak poza cyfrą.");
         template.textProperty().addListener((observable, before, after) -> invalidate());
         parameters.textProperty().addListener((observable, before, after) -> invalidate());
+    }
+
+    private void configureActions() {
         generate.setOnAction(event -> generate());
         open.setOnAction(event -> open());
         remove.setOnAction(event -> removeSelected());
@@ -58,11 +75,6 @@ public final class UrlsTabView {
          */
         undo.setOnAction(event -> execute(new UndoPreviewCommand(session)));
         /** Koniec, Tydzień 2, Wzorzec 5: Memento, zastosowanie 5. */
-        SplitPane editors = new SplitPane(parameters, preview);
-        editors.setDividerPositions(0.35);
-        VBox.setVgrow(editors, Priority.ALWAYS);
-        return new Tab("URLs", new VBox(new ToolBar(new Label("Szablon:"), template, generate, open),
-                new ToolBar(remove, restore, undo, status), editors));
     }
 
     private void invalidate() {
@@ -117,15 +129,18 @@ public final class UrlsTabView {
             return;
         }
         status.setText("Otwieranie " + snapshot.urls().size() + " adresów…");
-        CompletableFuture.supplyAsync(() -> tools.open(snapshot)).whenComplete((count, error) -> Platform.runLater(() -> {
-            session.finishOpening();
-            status.setText(error == null ? "Przekazano do przeglądarki: " + count + " adresów."
-                    : error.getCause().getMessage());
-        }));
+        CompletableFuture.supplyAsync(() -> tools.open(snapshot))
+                .whenComplete((count, error) -> Platform.runLater(() -> showOpeningResult(count, error)));
+    }
+
+    private void showOpeningResult(Integer count, Throwable error) {
+        session.finishOpening();
+        status.setText(error == null ? "Przekazano do przeglądarki: " + count + " adresów."
+                : error.getCause().getMessage());
     }
 
     public List<String> reportLines() {
-        UrlGroup batch = session.batch();
+        UrlListing batch = session.batch();
         /**
          * Tydzień 2, Wzorzec 3: Iterator, zastosowanie 3.
          * Wyeksportowanie podglądu wykorzystuje wywołanie iteratora przez spliterator().

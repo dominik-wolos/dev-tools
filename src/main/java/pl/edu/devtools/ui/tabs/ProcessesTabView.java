@@ -9,7 +9,8 @@ import javafx.collections.transformation.SortedList;
 import javafx.scene.control.*;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
-import pl.edu.devtools.core.DevToolsFacade;
+import pl.edu.devtools.core.processes.ProcessListing;
+import pl.edu.devtools.core.processes.ProcessStopping;
 import pl.edu.devtools.core.ProcessRow;
 
 import java.util.ArrayList;
@@ -19,7 +20,8 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 
 public final class ProcessesTabView {
-    private final DevToolsFacade tools;
+    private final ProcessListing processes;
+    private final ProcessStopping stopper;
     private final TableView<ProcessRow> table = new TableView<>();
     private final ObservableList<ProcessRow> source = FXCollections.observableArrayList();
     private final FilteredList<ProcessRow> rows = new FilteredList<>(source);
@@ -27,11 +29,24 @@ public final class ProcessesTabView {
     private final Button refresh = new Button("Odśwież");
     private final Button stop = new Button("Zatrzymaj");
 
-    public ProcessesTabView(DevToolsFacade tools) {
-        this.tools = tools;
+    public ProcessesTabView(ProcessListing processes, ProcessStopping stopper) {
+        this.processes = processes;
+        this.stopper = stopper;
     }
 
     public Tab create() {
+        configureTable();
+        TextArea details = details();
+        stop.setDisable(true);
+        stop.setOnAction(event -> stopSelected());
+        refresh.setOnAction(event -> refresh());
+        VBox.setVgrow(table, Priority.ALWAYS);
+        VBox content = new VBox(new ToolBar(refresh, stop, filter(), status), table, details);
+        refresh();
+        return new Tab("Processes", content);
+    }
+
+    private TextField filter() {
         TextField filter = new TextField();
         filter.setPromptText("Filtruj po nazwie, PID lub użytkowniku");
         filter.setPrefColumnCount(28);
@@ -41,6 +56,10 @@ public final class ProcessesTabView {
                     || Long.toString(row.pid()).contains(query)
                     || row.user().toLowerCase(Locale.ROOT).contains(query));
         });
+        return filter;
+    }
+
+    private void configureTable() {
         var sorted = new SortedList<>(rows);
         sorted.comparatorProperty().bind(table.comparatorProperty());
         table.setItems(sorted);
@@ -50,7 +69,9 @@ public final class ProcessesTabView {
         table.getColumns().add(column("PID", ProcessRow::pid));
         table.getColumns().add(column("Użytkownik", ProcessRow::user));
         table.getColumns().add(column("CPU łącznie [s]", ProcessRow::cpuSeconds));
+    }
 
+    private TextArea details() {
         TextArea details = new TextArea();
         details.setEditable(false);
         details.setPrefRowCount(3);
@@ -60,13 +81,7 @@ public final class ProcessesTabView {
                     + (row.command().isBlank() ? "niedostępny" : row.command()) + "\nUruchomiono (UTC): " + row.started());
             stop.setDisable(row == null || row.pid() <= 1 || row.pid() == ProcessHandle.current().pid());
         });
-        stop.setDisable(true);
-        stop.setOnAction(event -> stopSelected());
-        refresh.setOnAction(event -> refresh());
-        VBox.setVgrow(table, Priority.ALWAYS);
-        VBox content = new VBox(new ToolBar(refresh, stop, filter, status), table, details);
-        refresh();
-        return new Tab("Processes", content);
+        return details;
     }
 
     private <T> TableColumn<ProcessRow, T> column(String title, Function<ProcessRow, T> value) {
@@ -81,7 +96,7 @@ public final class ProcessesTabView {
         /** Tydzień 1, Wzorzec 7/9: Facade, zastosowanie 4.
         *Przycisk Odśwież pobiera procesy przez fasadę w tle, a potem aktualizuje
         * tabelę. Widok nie odwołuje się bezpośrednio do systemowego ProcessHandle.*/
-        CompletableFuture.supplyAsync(tools::processes).whenComplete((result, error) -> Platform.runLater(() -> {
+        CompletableFuture.supplyAsync(processes::list).whenComplete((result, error) -> Platform.runLater(() -> {
             refresh.setDisable(false);
             if (error == null) {
                 source.setAll(result);
@@ -98,20 +113,28 @@ public final class ProcessesTabView {
         if (row == null) {
             return;
         }
+        if (confirmStop(row)) {
+            stop(row);
+        }
+    }
+
+    private boolean confirmStop(ProcessRow row) {
         Alert confirm = new Alert(Alert.AlertType.CONFIRMATION,
                 "Zatrzymać " + row.name() + " (PID " + row.pid() + ")? Niezapisane dane mogą zostać utracone.",
                 ButtonType.OK, ButtonType.CANCEL);
         confirm.initOwner(table.getScene().getWindow());
         confirm.setHeaderText("Zatrzymanie procesu");
-        if (confirm.showAndWait().orElse(ButtonType.CANCEL) == ButtonType.OK) {
-            try {
-                boolean requested = tools.stop(row.pid());
-                refresh();
-                status.setText(requested ? "Wysłano prośbę o zatrzymanie. Odśwież listę za chwilę."
-                        : "Proces już zakończony lub system odmówił zatrzymania.");
-            } catch (RuntimeException error) {
-                status.setText(error.getMessage());
-            }
+        return confirm.showAndWait().orElse(ButtonType.CANCEL) == ButtonType.OK;
+    }
+
+    private void stop(ProcessRow row) {
+        try {
+            boolean requested = stopper.stop(row.pid());
+            refresh();
+            status.setText(requested ? "Wysłano prośbę o zatrzymanie. Odśwież listę za chwilę."
+                    : "Proces już zakończony lub system odmówił zatrzymania.");
+        } catch (RuntimeException error) {
+            status.setText(error.getMessage());
         }
     }
 

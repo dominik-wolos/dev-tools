@@ -105,8 +105,8 @@ odbiorców, a ponowna rejestracja tego samego obiektu nie dubluje powiadomień.
 
 ## Laboratorium 3
 
-Plan siedmiu etapów za 24 punkty: [docs/PLAN_LAB3.md](docs/PLAN_LAB3.md).
-Zmiany wprowadzamy po jednym zadaniu, z przeglądem po każdym etapie.
+Zadania **1, 2, 3, 5, 6, 7 i 8** są zrealizowane. Opis do oddania z konkretnymi
+hierarchiami, podziałem interfejsów i przykładami funkcji: [docs/LAB3.md](docs/LAB3.md).
 
 **Punkt 1 — zasada podstawienia Liskov.** Trzy konkretne klasy bazowe mają
 klasy pochodne, które dodają komunikaty diagnostyczne na poziomie `FINE`:
@@ -115,7 +115,7 @@ klasy pochodne, które dodają komunikaty diagnostyczne na poziomie `FINE`:
 | --- | --- | --- |
 | `JacksonJsonTool` | `LoggingJacksonJsonTool` | pole `json` w `DevToolsApplication` |
 | `UrlNodeFactory` | `LoggingUrlNodeFactory` | pole `factory` w `UrlBuilder` |
-| `FileReportOutput` | `LoggingFileReportOutput` | zmienna `output` w `ReportExportView.save()` |
+| `FileReportOutput` | `LoggingFileReportOutput` | zmienna `output` w `ReportExportView.saveReport()` |
 
 Każda klasa pochodna wywołuje metodę bazową przez `super` i dodaje diagnostykę
 po jej powodzeniu. Nie zawęża akceptowanych danych, nie zmienia wyniku i nie
@@ -128,6 +128,27 @@ Testy `JacksonJsonToolSubstitutionTest`, `UrlNodeFactorySubstitutionTest` oraz
 obiektów przez zmienne typu bazowego. Sprawdzają wyniki operacji JSON-a i błędy,
 rodzaj i zawartość węzłów URL oraz zapis UTF-8, nadpisywanie, pusty tekst i błędy I/O.
 Klasy i miejsca ich użycia oznaczono komentarzami tygodnia 3, punktu 1.
+
+**Punkt 2 — DIP.** Trzy hierarchie interfejs → klasa abstrakcyjna → implementacja:
+`JsonTool` → `AbstractJsonTool` → `JacksonJsonTool`,
+`ReportExporter` → `Report` → `TextReport`/`JsonReport` oraz
+`UrlSessionObservable` → `UrlSessionObservableSupport` → `UrlSession`.
+Wykorzystano dotychczasowe klasy raportu i obsługi obserwatorów.
+
+**Punkt 3 — ISP.** `Processes` łączy teraz `ProcessListing` i `ProcessStopping`,
+`UrlNode` — `UrlListing` i `UrlCopyable`, a `UrlSessionObservable` —
+`UrlSessionState` i `UrlSessionSubscriptions`. Odbiorcy otrzymują potrzebną rolę;
+interfejsy zbiorcze pozostały dla obiektów realizujących wszystkie operacje.
+
+**Punkty 5–8 — funkcje.** Dłuższe metody podzielono na kroki konfiguracji,
+walidacji, wykonania i prezentacji. Zachowano wcześniejsze małe funkcje.
+`ProcessRow` grupuje tożsamość i dane wykonania procesu, a `UrlPreviewActions`
+łączy przyciski edycji podglądu. Metody kodu produkcyjnego mają do 20 linii,
+a konstruktory i metody przyjmują najwyżej trzy argumenty.
+
+Kompilacja i **58/58 testów**
+dostępnych w piaskownicy przeszły; jeden test odczytu procesów pominięto.
+Nie wykonywano interaktywnego testu GUI.
 
 **Punkt 11 — organizacja obiektowa i jeden typ w pliku.** Każdy plik Java w
 `src/main/java` oraz `src/test/java` zawiera dokładnie jeden nazwany typ

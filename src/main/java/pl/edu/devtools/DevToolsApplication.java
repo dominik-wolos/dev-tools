@@ -37,7 +37,18 @@ public class DevToolsApplication extends Application {
 
     @Override
     public void start(Stage stage) {
-        var processes = new ProcessesTabView(tools);
+        BorderPane root = new BorderPane(tabs(stage));
+        root.setTop(header());
+        root.getStyleClass().add("app-root");
+        stage.setTitle("DevTools");
+        stage.setScene(scene(root));
+        stage.setMinWidth(900);
+        stage.setMinHeight(600);
+        stage.show();
+    }
+
+    private TabPane tabs(Stage stage) {
+        var processes = new ProcessesTabView(tools, tools);
         var json = new JsonTabView(tools);
         var urls = new UrlsTabView(tools);
         TabPane tabs = new TabPane(
@@ -45,7 +56,10 @@ public class DevToolsApplication extends Application {
                 withExport(json.create(), json::reportLines, stage),
                 withExport(urls.create(), urls::reportLines, stage));
         tabs.setTabClosingPolicy(TabPane.TabClosingPolicy.UNAVAILABLE);
+        return tabs;
+    }
 
+    private HBox header() {
         Label title = new Label("DevTools");
         title.getStyleClass().add("app-title");
         Label subtitle = new Label("Procesy · JSON · URL-e");
@@ -53,20 +67,16 @@ public class DevToolsApplication extends Application {
         HBox header = new HBox(20, title, subtitle);
         header.getStyleClass().add("app-header");
         header.setPadding(new Insets(18, 24, 16, 24));
+        return header;
+    }
 
-        BorderPane root = new BorderPane(tabs);
-        root.setTop(header);
-        root.getStyleClass().add("app-root");
+    private Scene scene(BorderPane root) {
         Scene scene = new Scene(root, 1100, 720);
         var stylesheet = getClass().getResource("/pl/edu/devtools/styles/app.css");
         if (stylesheet != null) {
             scene.getStylesheets().add(stylesheet.toExternalForm());
         }
-        stage.setTitle("DevTools");
-        stage.setScene(scene);
-        stage.setMinWidth(900);
-        stage.setMinHeight(600);
-        stage.show();
+        return scene;
     }
 
     private Tab withExport(Tab tab, Supplier<List<String>> lines, Stage owner) {

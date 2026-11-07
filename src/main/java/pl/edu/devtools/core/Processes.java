@@ -1,9 +1,8 @@
 package pl.edu.devtools.core;
 
-import java.util.List;
+import pl.edu.devtools.core.processes.ProcessListing;
+import pl.edu.devtools.core.processes.ProcessStopping;
 
-public interface Processes {
-    List<ProcessRow> list();
-
-    boolean stop(long pid);
+/** Tydzień 3, punkt 3: ISP — zbiorczy kontrakt adaptera i proxy, klienci wybierają węższe role. */
+public interface Processes extends ProcessListing, ProcessStopping {
 }

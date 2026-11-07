@@ -21,6 +21,14 @@ public final class JsonTabView {
     }
 
     public Tab create() {
+        configureEditors();
+        SplitPane editors = new SplitPane(input, output);
+        editors.setDividerPositions(0.5);
+        VBox.setVgrow(editors, Priority.ALWAYS);
+        return new Tab("JSON", new VBox(actions(), editors));
+    }
+
+    private void configureEditors() {
         input.setPromptText("{ \"orderID\": 123, \"status\": \"NEW\" }");
         output.setPromptText("Wynik walidacji, formatowania lub minifikacji JSON-a");
         output.setEditable(false);
@@ -29,6 +37,9 @@ public final class JsonTabView {
             output.clear();
             status.setText("Dane zmienione — sprawdź ponownie.");
         });
+    }
+
+    private ToolBar actions() {
         Button validate = new Button("Waliduj");
         Button format = new Button("Formatuj");
         Button minify = new Button("Minifikuj");
@@ -42,10 +53,7 @@ public final class JsonTabView {
             valid = false;
             status.setText("Wpisz JSON i wybierz operację.");
         });
-        SplitPane editors = new SplitPane(input, output);
-        editors.setDividerPositions(0.5);
-        VBox.setVgrow(editors, Priority.ALWAYS);
-        return new Tab("JSON", new VBox(new ToolBar(validate, format, minify, clear, status), editors));
+        return new ToolBar(validate, format, minify, clear, status);
     }
 
     private void run(Operation operation) {
@@ -60,14 +68,18 @@ public final class JsonTabView {
             valid = true;
             status.setText(String.format("Poprawny JSON · %.2f ms", tools.jsonMillis()));
         } catch (JsonProcessingException error) {
-            var location = error.getLocation();
-            output.setText(error.getOriginalMessage() + (location == null ? ""
-                    : "\nWiersz: " + location.getLineNr() + ", kolumna: " + location.getColumnNr()));
-            status.setText("Niepoprawny JSON");
+            showSyntaxError(error);
         } catch (Exception error) {
             output.setText(error.getMessage());
             status.setText("Nie udało się przetworzyć JSON-a.");
         }
+    }
+
+    private void showSyntaxError(JsonProcessingException error) {
+        var location = error.getLocation();
+        output.setText(error.getOriginalMessage() + (location == null ? ""
+                : "\nWiersz: " + location.getLineNr() + ", kolumna: " + location.getColumnNr()));
+        status.setText("Niepoprawny JSON");
     }
 
     public List<String> reportLines() {

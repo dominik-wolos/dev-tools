@@ -2,7 +2,10 @@ package pl.edu.devtools.core;
 
 import pl.edu.devtools.core.json.TimedJsonTool;
 import pl.edu.devtools.core.json.operations.Operation;
-import pl.edu.devtools.core.report.Report;
+import pl.edu.devtools.core.report.ReportExporter;
+import pl.edu.devtools.core.processes.ProcessListing;
+import pl.edu.devtools.core.processes.ProcessStopping;
+import pl.edu.devtools.core.urls.UrlCopyable;
 import pl.edu.devtools.core.urls.UrlBuilder;
 import pl.edu.devtools.core.urls.UrlGroup;
 
@@ -15,7 +18,7 @@ import java.util.stream.StreamSupport;
  * Tydzień 1, Wzorzec 7/9: Facade, zastosowanie 1.
  * Widoki korzystają z jednej usługi łączącej JSON, procesy, budowanie URL-i i raporty.
  */
-public final class DevToolsFacade {
+public final class DevToolsFacade implements ProcessListing, ProcessStopping {
     private final Processes processes;
     private final TimedJsonTool json;
     private final Browser browser;
@@ -32,10 +35,12 @@ public final class DevToolsFacade {
         this.browser = browser;
     }
 
-    public List<ProcessRow> processes() {
+    @Override
+    public List<ProcessRow> list() {
         return processes.list();
     }
 
+    @Override
     public boolean stop(long pid) {
         return processes.stop(pid);
     }
@@ -61,13 +66,17 @@ public final class DevToolsFacade {
      * Tydzień 1, Wzorzec 4/9: Adapter, zastosowanie 4.
     **Otwieranie URL-i używa interfejsu Browser; w aplikacji DesktopBrowser
      **/
-    public int open(UrlNode batch) {
+    public int open(UrlCopyable batch) {
         /** Tydzień 1, Wzorzec 5/9: Composite, zastosowanie 2.
-        ** Przycisk Otwórz URL-e przyjmuje wspólny UrlNode: UrlLink reprezentuje jeden
-        ** adres, a UrlGroup może zawierać dowolnie zagnieżdżone grupy.
+        ** Przycisk Otwórz URL-e wymaga tylko kopiowania. Wynik ma wspólny typ UrlNode:
+        ** UrlLink reprezentuje jeden adres, a UrlGroup zagnieżdżone grupy.
          */
         UrlNode addresses = batch.copy();
         /** Koniec, Tydzień 1, Wzorzec 5/9: Composite, zastosowanie 2.*/
+        return openAddresses(addresses);
+    }
+
+    private int openAddresses(Iterable<URI> addresses) {
         /**
          * Tydzień 2, Wzorzec 3: Iterator, zastosowanie 2.
          * Niezależne wywołanie iteratora zlicza adresy, a kolejne przekazuje je przeglądarce.
@@ -88,7 +97,7 @@ public final class DevToolsFacade {
     }
     /** Koniec, Tydzień 1, Wzorzec 4/9: Adapter, zastosowanie 4. */
 
-    public void export(List<String> lines, Report report) throws IOException {
+    public void export(List<String> lines, ReportExporter report) throws IOException {
         /**
          * Tydzień 2, Wzorzec 9: Template Method, zastosowanie 2.
          * Wspólne wywołanie metody szablonowej dla raportu TXT lub JSON.

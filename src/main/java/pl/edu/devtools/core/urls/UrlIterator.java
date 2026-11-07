@@ -1,7 +1,5 @@
 package pl.edu.devtools.core.urls;
 
-import pl.edu.devtools.core.UrlNode;
-
 import java.net.URI;
 import java.util.Collections;
 import java.util.Iterator;
@@ -13,10 +11,10 @@ import java.util.Objects;
  * Leniwe przejście DFS korzysta z iteratorów dzieci bez spłaszczania drzewa.
  */
 public final class UrlIterator implements Iterator<URI> {
-    private final Iterator<? extends UrlNode> nodes;
+    private final Iterator<? extends Iterable<URI>> nodes;
     private Iterator<URI> current = Collections.emptyIterator();
 
-    public UrlIterator(Iterator<? extends UrlNode> nodes) {
+    public UrlIterator(Iterator<? extends Iterable<URI>> nodes) {
         this.nodes = Objects.requireNonNull(nodes);
     }
 

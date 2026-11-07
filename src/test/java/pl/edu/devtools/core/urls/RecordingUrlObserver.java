@@ -1,7 +1,7 @@
 package pl.edu.devtools.core.urls;
 
 import pl.edu.devtools.core.urls.observers.UrlSessionObserver;
-import pl.edu.devtools.core.urls.observers.UrlSessionObservable;
+import pl.edu.devtools.core.urls.observers.UrlSessionState;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,7 +12,7 @@ final class RecordingUrlObserver implements UrlSessionObserver {
     final List<Boolean> undo = new ArrayList<>();
 
     @Override
-    public void sessionChanged(UrlSessionObservable session) {
+    public void sessionChanged(UrlSessionState session) {
         sizes.add(session.batch() == null ? -1 : session.batch().urls().size());
         editable.add(session.canEdit());
         undo.add(session.canUndo());

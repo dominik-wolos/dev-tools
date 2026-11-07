@@ -19,6 +19,8 @@ import pl.edu.devtools.infrastructure.FileReportOutput;
 import pl.edu.devtools.infrastructure.LoggingFileReportOutput;
 
 import java.util.List;
+import java.io.File;
+import java.io.IOException;
 import java.util.function.Supplier;
 
 public final class ReportExportView {
@@ -61,27 +63,35 @@ public final class ReportExportView {
     private void save(ActionEvent event) {
         try {
             List<String> data = exportable();
-            FileChooser chooser = new FileChooser();
-            chooser.setTitle("Zapisz wynik");
-            chooser.setInitialFileName("devtools." + (asJson() ? "json" : "txt"));
-            chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter(
-                    asJson() ? "JSON" : "Tekst", asJson() ? "*.json" : "*.txt"));
-            var file = chooser.showSaveDialog(owner);
+            File file = fileChooser().showSaveDialog(owner);
             if (file != null) {
-                /** Tydzień 3, Stosowanie zasad SOLID, punkt 1: Liskov, zastosowanie 3 — raport otrzymuje typ bazowy. */
-                FileReportOutput output = new LoggingFileReportOutput(file.toPath());
-                /** Koniec, Tydzień 3, punkt 1: Liskov, zastosowanie 3. */
-                /** Tydzień 1, Wzorzec 9/9: Bridge, zastosowanie 6.
-                * Przycisk Zapisz wynik łączy wybrany format raportu z plikiem
-                * wskazanym w oknie zapisu; nie potrzebuje osobnych eksporterów dla TXT i JSON.
-                 */
-                tools.export(data, report(output));
-                /** Koniec, Tydzień 1, Wzorzec 9/9: Bridge, zastosowanie 6.*/
+                saveReport(data, file);
                 status.setText("Zapisano: " + file.getName());
             }
         } catch (Exception error) {
             status.setText(error.getMessage());
         }
+    }
+
+    private FileChooser fileChooser() {
+        FileChooser chooser = new FileChooser();
+        chooser.setTitle("Zapisz wynik");
+        chooser.setInitialFileName("devtools." + (asJson() ? "json" : "txt"));
+        chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter(
+                asJson() ? "JSON" : "Tekst", asJson() ? "*.json" : "*.txt"));
+        return chooser;
+    }
+
+    private void saveReport(List<String> data, File file) throws IOException {
+        /** Tydzień 3, Stosowanie zasad SOLID, punkt 1: Liskov, zastosowanie 3 — raport otrzymuje typ bazowy. */
+        FileReportOutput output = new LoggingFileReportOutput(file.toPath());
+        /** Koniec, Tydzień 3, punkt 1: Liskov, zastosowanie 3. */
+        /** Tydzień 1, Wzorzec 9/9: Bridge, zastosowanie 6.
+        * Przycisk Zapisz wynik łączy wybrany format raportu z plikiem
+        * wskazanym w oknie zapisu; nie potrzebuje osobnych eksporterów dla TXT i JSON.
+         */
+        tools.export(data, report(output));
+        /** Koniec, Tydzień 1, Wzorzec 9/9: Bridge, zastosowanie 6.*/
     }
 
     private boolean asJson() {
