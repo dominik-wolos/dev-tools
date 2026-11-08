@@ -1,22 +1,29 @@
 package pl.edu.devtools.core.urls;
 
+import java.util.ArrayDeque;
+import java.util.Deque;
+
 /**
  * Lab 2, zadanie 5: Memento, zastosowanie 4.
- * Opiekun przechowuje jedną migawkę bez dostępu do jej zawartości.
+ * Opiekun przechowuje stos migawek bez dostępu do ich zawartości.
  */
 final class UrlHistory {
-    private UrlMemento previous;
+    private final Deque<UrlMemento> snapshots = new ArrayDeque<>();
 
     void save(UrlMemento memento) {
-        previous = memento;
+        snapshots.push(memento);
     }
 
     UrlMemento previous() {
-        return previous;
+        return snapshots.peek();
+    }
+
+    void discardPrevious() {
+        snapshots.pop();
     }
 
     void clear() {
-        previous = null;
+        snapshots.clear();
     }
 }
 /** Koniec, Lab 2, zadanie 5: Memento, zastosowanie 4. */

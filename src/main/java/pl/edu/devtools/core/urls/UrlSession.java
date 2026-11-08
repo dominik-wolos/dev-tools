@@ -94,14 +94,14 @@ public final class UrlSession extends UrlSessionObservableSupport {
 
     /**
      * Lab 2, zadanie 5: Memento, zastosowanie 3.
-     * Jednokrotne wywołanie odtworzenia migawki przywraca ostatni stan batch.
+     * Każde wywołanie odtwarza ostatnią migawkę i usuwa tylko ją z historii.
      */
     public void undo() {
         state.requireEditable();
         UrlMemento previous = history.previous();
         if (previous != null) {
             batch = previous.restore();
-            history.clear();
+            history.discardPrevious();
             notifyObservers();
         }
     }

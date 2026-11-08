@@ -11,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class UrlMementoTest {
     @Test
-    void undoRestoresOnlyTheLastRemovalAndConsumesHistory() {
+    void consecutiveUndosRestoreRemovalsInReverseOrder() {
         var session = session("1,2\n3");
         var parent = (UrlGroup) session.batch().children().get(0);
         session.remove(parent, parent.children().get(0));
@@ -24,9 +24,12 @@ class UrlMementoTest {
         assertEquals(List.of("/2", "/3"), paths(session));
         assertEquals(2, session.batch().children().size());
         assertInstanceOf(UrlGroup.class, session.batch().children().get(0));
+        assertTrue(session.canUndo());
+        undo.execute();
+        assertEquals(List.of("/1", "/2", "/3"), paths(session));
         assertFalse(session.canUndo());
         undo.execute();
-        assertEquals(List.of("/2", "/3"), paths(session));
+        assertEquals(List.of("/1", "/2", "/3"), paths(session));
     }
 
     @Test
@@ -37,9 +40,30 @@ class UrlMementoTest {
         assertEquals(List.of("/1", "/2", "/3"), paths(session));
         session.undo();
         assertEquals(List.of("/1", "/2"), paths(session));
+        assertTrue(session.canUndo());
+        session.undo();
+        assertEquals(List.of("/1", "/2", "/3"), paths(session));
         assertFalse(session.canUndo());
         session.restore();
         assertEquals(List.of("/1", "/2", "/3"), paths(session));
+    }
+
+    @Test
+    void editingAfterUndoKeepsOlderSnapshotsWithoutRestoringTheAbandonedChange() {
+        var session = session("1,2\n3\n4");
+        session.remove(session.batch(), session.batch().children().get(2));
+        session.remove(session.batch(), session.batch().children().get(1));
+        session.undo();
+        assertEquals(List.of("/1", "/2", "/3"), paths(session));
+
+        var parent = (UrlGroup) session.batch().children().get(0);
+        session.remove(parent, parent.children().get(0));
+        assertEquals(List.of("/2", "/3"), paths(session));
+        session.undo();
+        assertEquals(List.of("/1", "/2", "/3"), paths(session));
+        session.undo();
+        assertEquals(List.of("/1", "/2", "/3", "/4"), paths(session));
+        assertFalse(session.canUndo());
     }
 
     @Test

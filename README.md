@@ -17,6 +17,7 @@ Aplikacja Java 17 + JavaFX na zajęcia
   są zachowywane; brak protokołu oznacza `http://`.
   Można usunąć URL lub całą grupę z podglądu, a następnie przywrócić pierwotny zestaw.
   „Cofnij” odtwarza stan sprzed ostatniego usunięcia lub przywrócenia podglądu.
+  Kolejne kliknięcia cofają wcześniejsze operacje aż do wyczerpania historii.
 - Wyniki każdej zakładki można wyeksportować jako TXT lub JSON do pliku albo schowka.
   Eksport JSON jest tablicą tekstowych wyników (nie modelem danych procesów).
 
@@ -79,8 +80,9 @@ Przyciski zakładki URLs wywołują komendy przez wspólny interfejs; model i ko
 można uruchamiać oraz testować bez JavaFX. Każdy typ ma własny plik.
 
 Piąty etap: **5. Memento** — `UrlMemento` ukrywa głęboką kopię bieżącego podglądu,
-a `UrlHistory` przechowuje jeden zapis. `UrlSession` zapisuje stan przed usunięciem
-lub przywróceniem; `UndoPreviewCommand` odtwarza go i zużywa historię.
+a `UrlHistory` przechowuje stos zapisów. `UrlSession` zapisuje stan przed usunięciem
+lub przywróceniem; `UndoPreviewCommand` odtwarza ostatni zapis i usuwa tylko jego
+migawkę. Kolejne wywołania cofają wcześniejsze zmiany.
 Nowe generowanie i zmiana formularza czyszczą historię. Prototyp nadal służy
 do przywracania całego pierwotnego zestawu, niezależnie od cofania ostatniej zmiany.
 
@@ -146,7 +148,7 @@ walidacji, wykonania i prezentacji. Zachowano wcześniejsze małe funkcje.
 łączy przyciski edycji podglądu. Metody kodu produkcyjnego mają do 20 linii,
 a konstruktory i metody przyjmują najwyżej trzy argumenty.
 
-Kompilacja i **58/58 testów**
+Kompilacja i **59/59 testów**
 dostępnych w piaskownicy przeszły; jeden test odczytu procesów pominięto.
 Nie wykonywano interaktywnego testu GUI.
 

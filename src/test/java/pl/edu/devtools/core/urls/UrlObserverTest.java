@@ -28,7 +28,7 @@ class UrlObserverTest {
 
         assertEquals(List.of(2, 1, 2, 1, 1, 1, -1), first.sizes);
         assertEquals(List.of(true, true, true, true, false, true, true), first.editable);
-        assertEquals(List.of(false, true, true, false, false, false, false), first.undo);
+        assertEquals(List.of(false, true, true, true, false, true, false), first.undo);
         assertEquals(first.sizes, second.sizes);
         assertEquals(first.editable, second.editable);
         assertEquals(first.undo, second.undo);
